@@ -1,0 +1,82 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import Header from './shared/components/Header'
+import SignupPage from './pages/auth/SignupPage'
+import LoginPage from './pages/auth/LoginPage'
+import PrivateRoute from './shared/components/PrivateRoute'
+import Layout from './shared/components/Layout'
+import { useDispatch } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { host } from './utils/config'
+import axios from 'axios'
+import { login, logout } from './store/authSlice'
+import { RiLoader4Fill } from 'react-icons/ri'
+
+function App() {
+    const dispatch = useDispatch();
+    const [ loading, setLoading ] = useState(true);
+
+    /* Validate the token */
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        axios
+          .get(`${host}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((result) => {
+            dispatch(login({ ...result.data.data, token }));
+          })
+          .catch(() => {
+            dispatch(logout());
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        dispatch(logout());
+        setLoading(false);
+      }
+    }, [dispatch]);
+
+    // Configuración para toaster
+    const [isDark, setIsDark] = useState();
+    useEffect(() => {
+      setIsDark(localStorage.getItem("theme") === "dark")
+    }, [])
+
+    if (loading) {
+      return (
+        <div className="min-h-screen min-w-screen flex justify-center items-center bg-slate-100">
+          <RiLoader4Fill className="animate-spin text-5xl text-blue-700" />
+        </div>
+      );
+    }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+    
+        {/* Rutas protegidas con Layout persistente  */}
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
+        </Route>
+
+
+        {/* Rutas públicas */}
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
