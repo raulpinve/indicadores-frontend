@@ -1,5 +1,4 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import Header from './shared/components/Header'
 import SignupPage from './pages/auth/SignupPage'
 import LoginPage from './pages/auth/LoginPage'
 import PrivateRoute from './shared/components/PrivateRoute'
@@ -11,6 +10,8 @@ import axios from 'axios'
 import { login, logout } from './store/authSlice'
 import { RiLoader4Fill } from 'react-icons/ri'
 import ConfiguracionPage from './pages/configuracion/ConfiguracionPage'
+import ConfiguracionEmpresaPage from './pages/configuracion/ConfiguracionEmpresaPage'
+import { Toaster } from 'sonner'
 
 function App() {
     const dispatch = useDispatch();
@@ -71,12 +72,14 @@ function App() {
         >
           <Route path="/" element={<Navigate to="/configuracion" replace />} />
           <Route path="/configuracion" element={<ConfiguracionPage />} />
+          <Route path="/configuracion/empresas/:empresaId" element={<ConfiguracionEmpresaPage />} />
         </Route>
 
         {/* Rutas públicas */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
+      <Toaster richColors position="bottom-right" />
     </BrowserRouter>
   )
 }

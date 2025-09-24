@@ -1,15 +1,14 @@
-import React, {  useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Modal from '../../../../shared/components/Modal'
 import { useForm } from 'react-hook-form'
 import Button from '../../../../shared/components/Button'
 import { handleErrors } from '../../../../utils/handleErrors'
 import { toast } from 'sonner'
-// import { crearCriterio } from '../../services/criteriosServices'
 import MessageError from '../../../../shared/components/MessageError'
 import { crearEmpresa } from '../../services/empresaServices'
 
 const ModalCrearEmpresa = (props) => {
-    const {register, handleSubmit, setError, formState: { errors }, setValue} = useForm({ mode: "onChange"})
+    const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
     const [messageError, setMessageError] = useState(false)
     const [loading, setLoading] = useState(false)
     const {cerrarModal, setEmpresas} = props
@@ -25,16 +24,13 @@ const ModalCrearEmpresa = (props) => {
             cerrarModal();
             setValue("nombre", "");
             toast.success(`La empresa ha sido creada exitosamente.`);
+            reset();
         } catch (error) {
             handleErrors(error, setError, setMessageError);
         } finally{
             setLoading(false)
         }
     }
-
-    useEffect(() => {
-        setValue("nombre", "Empresa de prueba")
-    }, [])
 
     return (
         <Modal

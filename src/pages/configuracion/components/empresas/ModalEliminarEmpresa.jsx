@@ -13,7 +13,6 @@ const ModalEliminarEmpresa = (props) => {
     const [loading, setLoading] = useState(false)
 
     const onDelete = async () => {
-        // 🚨 Validación extra de seguridad
         if (confirmText !== "ELIMINAR") {
             setMessageError("Debes escribir ELIMINAR para confirmar la eliminación.")
             return

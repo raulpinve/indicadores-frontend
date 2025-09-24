@@ -1,4 +1,3 @@
-import imageDefault from "../../../../assets/images/image-default.png";
 import CardTitulo from '../../../../shared/components/CardTitulo';
 import TableThead from '../../../../shared/components/TableThead';
 import TableTbody from '../../../../shared/components/TableTbody';
@@ -8,7 +7,6 @@ import TableTd from '../../../../shared/components/TableTd';
 import React, { useEffect, useState } from 'react';
 import Table from '../../../../shared/components/Table';
 import Card from '../../../../shared/components/Card';
-import { host } from '../../../../utils/config';
 import SkeletonTable from '../../../../shared/components/SkeletonTable';
 import Pagination from '../../../../shared/components/Pagination';
 import Button from '../../../../shared/components/Button';
@@ -17,6 +15,7 @@ import { obtenerTodasEmpresas } from "../../services/empresaServices";
 import ModalCrearEmpresa from "./ModalCrearEmpresa";
 import ModalEditarEmpresa from "./ModalEditarEmpresa";
 import ModalEliminarEmpresa from "./ModalEliminarEmpresa";
+import { useNavigate } from "react-router-dom";
 
 const Empresas = () => {
     const [loading, setLoading] = useState(false);
@@ -28,6 +27,7 @@ const Empresas = () => {
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
     const debouncedConsulta = useDebounce(consulta, 500);
+    const navigate = useNavigate();
 
     // Obtener empresas
     useEffect(() => {
@@ -49,8 +49,8 @@ const Empresas = () => {
         fetchEmpresas();
     }, [paginaActual, debouncedConsulta]);
 
-    const redireccionarAEmpresa = (usuarioId) => {
-        console.log(usuarioId);
+    const redireccionarAEmpresa = (empresaId) => {
+       navigate(`/configuracion/empresas/${empresaId}`);
     }
 
     return (
@@ -113,11 +113,7 @@ const Empresas = () => {
                                 >
                                     <TableTd className='flex items-center gap-2'>
                                         <img 
-                                            src={`${host}${empresa.avatarThumbnail}`}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = imageDefault; 
-                                            }}
+                                            src={`${empresa.avatarThumbnail}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setEmpresaSeleccionada(empresa);

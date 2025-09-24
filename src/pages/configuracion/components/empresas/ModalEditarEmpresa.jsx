@@ -8,28 +8,38 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 const ModalEditarEmpresa = (props) => {
-    const {register, handleSubmit, setError, formState: { errors }, setValue} = useForm({ mode: "onChange"})
+    const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
     const [messageError, setMessageError] = useState(false)
     const [loading, setLoading] = useState(false)
     const {cerrarModal, setEmpresas, empresaSeleccionada} = props
 
-    // Crea el estandar
-    const onSubmit = async(values) => {
-        setMessageError(false)
-        setLoading(true)
+    // Editar la empresa
+    const onSubmit = async (values) => {
+        setMessageError(false);
+        setLoading(true);
+
         try {
-            const result = await editarEmpresa(values)
-            const { data } = result 
-            setEmpresas(prevGrupos => [data, ...prevGrupos]);
+            const { data } = await editarEmpresa(values, empresaSeleccionada?.id);
+
+            // Actualizar la lista de empresas reemplazando solo el nombre
+            setEmpresas((prevEmpresas) =>
+                prevEmpresas.map((empresa) =>
+                    empresa.id === data.id
+                    ? { ...empresa, nombre: data.nombre } // solo actualiza el nombre
+                    : empresa
+                )
+            );
+
             cerrarModal();
-            setValue("nombre", "");
-            toast.success(`La empresa ha sido editada exitosamente.`);
+            reset(); // si usas react-hook-form, mejor que setValue manual
+            toast.success("La empresa ha sido editada exitosamente.");
         } catch (error) {
             handleErrors(error, setError, setMessageError);
-        } finally{
-            setLoading(false)
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
 
     useEffect(() => {
         setValue("nombre", empresaSeleccionada?.nombre)
