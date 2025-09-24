@@ -25,7 +25,7 @@ const Sidebar = () => {
         >
             {/* Logo */}
             <div className="mt-13 lg:mt-0 pt-7 pb-6 flex items-center">
-                <h2 className="font-semibold text-3xl transition-all duration-200">
+                <h2 className="font-semibold text-2xl transition-all duration-200">
                     { sidebarOpen 
                         ? "Indicadores"
                         : <p className='px-3'>In</p>}
