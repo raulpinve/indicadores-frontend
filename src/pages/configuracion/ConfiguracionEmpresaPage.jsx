@@ -5,7 +5,7 @@ import { obtenerEmpresa } from './services/empresaServices';
 import Title from '../../shared/components/Title';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { host } from '../../utils/config';
+import Procesos from './components/procesos/Procesos';
 
 const ConfiguracionEmpresaPage = () => {
     const { empresaId } = useParams();
@@ -41,7 +41,8 @@ const ConfiguracionEmpresaPage = () => {
                 {empresa?.nombre || <SkeletonElement className="w-50 h-8" />}
             </Title>
 
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-[1.5fr_1fr]">
+                <Procesos />
             </div>
         </div>
     );
