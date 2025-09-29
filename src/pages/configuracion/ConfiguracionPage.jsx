@@ -1,11 +1,13 @@
 import Title from '../../shared/components/Title';
 import Empresas from './components/empresas/Empresas';
+import Usuarios from './components/usuarios/Usuarios';
 
 const ConfiguracionPage = () => {
     return (
         <>
             <Title>Configuración</Title>  
-            <div className="grid grid-cols-2">
+            <div className="grid mt-4">
+                <Usuarios /> 
                 <Empresas />
             </div>
         </>

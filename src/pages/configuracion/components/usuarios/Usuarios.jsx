@@ -11,33 +11,32 @@ import SkeletonTable from '../../../../shared/components/SkeletonTable';
 import Pagination from '../../../../shared/components/Pagination';
 import Button from '../../../../shared/components/Button';
 import { LuEraser, LuPencil, LuSearch } from 'react-icons/lu';
-import { obtenerTodasEmpresas } from "../../services/empresaServices";
-import ModalCrearEmpresa from "./ModalCrearEmpresa";
-import ModalEditarEmpresa from "./ModalEditarEmpresa";
-import ModalEliminarEmpresa from "./ModalEliminarEmpresa";
-import { useNavigate } from "react-router-dom";
+import { obtenerTodosUsuarios } from "../../services/usuarioServices";
+import ModalCrearUsuario from './ModalCrearUsuario';
+import ModalEditarUsuario from "./ModalEditarUsuario";
+import ModalEliminarUsuario from './ModalEliminarUsuario';
+import ModalImagenUsuario from './ModalImagenUsuario';
 
-const Empresas = () => {
+const Usuarios = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [empresas, setEmpresas] = useState([]);
-    const [empresaSeleccionada, setEmpresaSeleccionada] = useState();
+    const [usuarios, setUsuarios] = useState([]);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState();
     const [consulta, setConsulta] = useState("");
     const [modalActivo, setModalActivo] = useState("");
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
     const debouncedConsulta = useDebounce(consulta, 500);
-    const navigate = useNavigate();
 
-    // Obtener empresas
+    // Obtener usuarios
     useEffect(() => {
-        const fetchEmpresas = async () => {
+        const fetchUsuarios = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                const respuesta = await obtenerTodasEmpresas(paginaActual, debouncedConsulta);
-                setEmpresas(respuesta.data);
+                const respuesta = await obtenerTodosUsuarios(paginaActual, debouncedConsulta);
+                setUsuarios(respuesta.data);
                 setPaginaActual(respuesta.paginacion.pagina);
                 setTotalPaginas(respuesta.paginacion.totalPaginas);
             } catch (error) {
@@ -46,16 +45,12 @@ const Empresas = () => {
                 setLoading(false);
             }
         };
-        fetchEmpresas();
+        fetchUsuarios();
     }, [paginaActual, debouncedConsulta]);
 
-    const redireccionarAEmpresa = (empresaId) => {
-       navigate(`/configuracion/empresas/${empresaId}`);
-    }
-
     return (
-        <Card className={`mt-4`}>
-            <CardTitulo>Empresas</CardTitulo>
+        <Card>
+            <CardTitulo>Usuarios</CardTitulo>
             <div className='flex items-center gap-2'>
                 <Button
                     type="button"
@@ -82,48 +77,53 @@ const Empresas = () => {
             <Table>
                 <TableThead>
                     <tr className="text-left">
-                        <TableTh>Nombre de la empresa</TableTh>
+                        <TableTh>Primer nombre</TableTh>
+                        <TableTh>Apellidos</TableTh>
+                        <TableTh>E-mail</TableTh>
+                        <TableTh>Username</TableTh>
                         <TableTh>Acciones</TableTh>
                     </tr>
                 </TableThead>
             
                 {/* Loading */}
                 {loading && (
-                    <SkeletonTable rows={7} columns={2}/>
+                    <SkeletonTable rows={7} columns={5}/>
                 )}
+
                 <TableTbody>
                     {/* Mostrar error */}
                     {!loading && error && (
                         <tr>
-                            <TableTd colSpan={2}>{error}</TableTd>
+                            <TableTd colSpan={5}>{error}</TableTd>
                         </tr>
                     )}
-                    {!loading && !error && empresas.length === 0 && (
+                    {!loading && !error && usuarios.length === 0 && (
                         <tr>
-                            <TableTd colSpan={2}>No hay empresas por mostrar</TableTd>
+                            <TableTd colSpan={5}>No hay usuarios por mostrar</TableTd>
                         </tr>
                     )}
-                    {!loading && !error && empresas.length > 0 && (
+                    {!loading && !error && usuarios.length > 0 && (
                         <>
-                            {empresas.map(empresa => {
+                            {usuarios.map(usuario => {
                                 return <tr 
-                                    key={empresa.id}
-                                    onClick={() => redireccionarAEmpresa(empresa.id)}
-                                    className="cursor-pointer"
+                                    key={usuario.id}
                                 >
                                     <TableTd className='flex items-center gap-2'>
                                         <img 
-                                            src={`${empresa.avatarThumbnail}`}
+                                            src={`${usuario.avatarThumbnail}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                setEmpresaSeleccionada(empresa);
-                                                setModalActivo("imagen-perfil");
+                                                setUsuarioSeleccionado(usuario);
+                                                setModalActivo("imagen"); 
                                             }}
                                             alt="Perfil" 
                                             className="w-8 h-8 block object-cover rounded-full select-none cursor-pointer"  
                                         />
-                                        <p> {empresa.nombre}</p>
+                                        <p>{usuario.primerNombre}</p>
                                     </TableTd>
+                                    <TableTd><p>{usuario.apellidos}</p></TableTd>
+                                    <TableTd><p>{usuario.email}</p></TableTd>
+                                    <TableTd><p>{usuario.username}</p></TableTd>
                                     <TableTd>
                                         <div className="text-gray-700 dark:text-gray-400 flex gap-2">
                                             <button 
@@ -132,7 +132,7 @@ const Empresas = () => {
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setModalActivo("editar"); 
-                                                    setEmpresaSeleccionada(empresa);
+                                                    setUsuarioSeleccionado(usuario);
                                                 }}    
                                             >
                                                 <LuPencil />
@@ -142,7 +142,7 @@ const Empresas = () => {
                                                 title="Eliminar empresa"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setEmpresaSeleccionada(empresa);
+                                                    setUsuarioSeleccionado(usuario);
                                                     setModalActivo("eliminar"); 
                                                 }} 
                                             >
@@ -165,24 +165,31 @@ const Empresas = () => {
                 />
             )}
             {modalActivo === "crear" && (
-                <ModalCrearEmpresa 
+                <ModalCrearUsuario 
                     cerrarModal={() => setModalActivo(null)}
-                    setEmpresas = {setEmpresas}
+                    setUsuarios = {setUsuarios}
                 />
             )}
             {modalActivo === "editar" && (
-                <ModalEditarEmpresa 
+                <ModalEditarUsuario 
                     cerrarModal={() => setModalActivo(null)}
-                    setEmpresas = {setEmpresas}
-                    empresaSeleccionada = {empresaSeleccionada}
+                    setUsuarios = {setUsuarios}
+                    usuarioSeleccionado = {usuarioSeleccionado}
                 />
             )}
 
             {modalActivo === "eliminar" && (
-                <ModalEliminarEmpresa 
+                <ModalEliminarUsuario 
                     cerrarModal={() => setModalActivo(null)}
-                    setEmpresas = {setEmpresas}
-                    empresaSeleccionada = {empresaSeleccionada}
+                    setUsuarios = {setUsuarios}
+                    usuarioSeleccionado = {usuarioSeleccionado}
+                />
+            )}
+
+            {modalActivo === "imagen" && (
+                <ModalImagenUsuario
+                    cerrarModal={() => setModalActivo(null)}
+                    usuarioSeleccionado = {usuarioSeleccionado}
                 />
             )}
             
@@ -190,4 +197,4 @@ const Empresas = () => {
     );
 };
 
-export default Empresas;
+export default Usuarios;
