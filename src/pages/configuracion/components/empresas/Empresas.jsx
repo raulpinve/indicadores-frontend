@@ -16,6 +16,7 @@ import ModalCrearEmpresa from "./ModalCrearEmpresa";
 import ModalEditarEmpresa from "./ModalEditarEmpresa";
 import ModalEliminarEmpresa from "./ModalEliminarEmpresa";
 import { useNavigate } from "react-router-dom";
+import ModalImagenEmpresa from './ModalImagenEmpresa';
 
 const Empresas = () => {
     const [loading, setLoading] = useState(false);
@@ -117,7 +118,7 @@ const Empresas = () => {
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setEmpresaSeleccionada(empresa);
-                                                setModalActivo("imagen-perfil");
+                                                setModalActivo("imagen");
                                             }}
                                             alt="Perfil" 
                                             className="w-8 h-8 block object-cover rounded-full select-none cursor-pointer"  
@@ -182,6 +183,13 @@ const Empresas = () => {
                 <ModalEliminarEmpresa 
                     cerrarModal={() => setModalActivo(null)}
                     setEmpresas = {setEmpresas}
+                    empresaSeleccionada = {empresaSeleccionada}
+                />
+            )}
+
+            {modalActivo === "imagen" && (
+                <ModalImagenEmpresa
+                    cerrarModal={() => setModalActivo(null)}
                     empresaSeleccionada = {empresaSeleccionada}
                 />
             )}
