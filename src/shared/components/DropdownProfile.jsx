@@ -55,6 +55,7 @@ const DropdownProfile = () => {
 					<Link 
 						to={`/editar-perfil`}
 						className="header-profile-li"
+						onClick={() => setIsOpen(false)}
 					>
 					<LuCircleUser />
 					<span>Editar perfil</span>

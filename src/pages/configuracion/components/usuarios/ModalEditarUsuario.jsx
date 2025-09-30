@@ -142,7 +142,13 @@ const ModalEditarUsuario = (props) => {
                         {messageError}
                     </MessageError>
                 }
-                <Button type="submit" loading={loading} className="my-3" colorButton="primary" textButton="Editar usuario"/>
+                <Button 
+                    type="submit" 
+                    loading={loading} 
+                    className="my-3" 
+                    colorButton="primary" 
+                    textButton="Editar usuario"
+                />
             </form>          
         </Modal>
     )

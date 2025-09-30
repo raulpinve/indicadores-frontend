@@ -14,7 +14,6 @@ export const cambiarAvatarUsuario = async (usuarioId, file) => {
             },
         }
     );
-
     return respuesta; 
 };
 
@@ -25,8 +24,8 @@ export const obtenerUsuario = async (usuarioId) => {
 };
 
 // Actualizar información de un usuario
-export const actualizarUsuario = async (usuarioId, data) => {
-    const respuesta = await api.put(`/perfil/${usuarioId}`, data);
+export const actualizarUsuario = async (data) => {
+    const respuesta = await api.put(`/perfil`, data);
     return respuesta.data;
 };
 

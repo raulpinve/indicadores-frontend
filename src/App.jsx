@@ -1,18 +1,18 @@
+import ConfiguracionEmpresaPage from './pages/configuracion/ConfiguracionEmpresaPage'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import SignupPage from './pages/auth/SignupPage'
-import LoginPage from './pages/auth/LoginPage'
+import ConfiguracionPage from './pages/configuracion/ConfiguracionPage'
+import EditarPerfilPage from './pages/perfil/EditarPerfilPage'
 import PrivateRoute from './shared/components/PrivateRoute'
+import { login, logout } from './store/authSlice'
+import SignupPage from './pages/auth/SignupPage'
 import Layout from './shared/components/Layout'
+import LoginPage from './pages/auth/LoginPage'
 import { useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { host } from './utils/config'
-import axios from 'axios'
-import { login, logout } from './store/authSlice'
 import { RiLoader4Fill } from 'react-icons/ri'
-import ConfiguracionPage from './pages/configuracion/ConfiguracionPage'
-import ConfiguracionEmpresaPage from './pages/configuracion/ConfiguracionEmpresaPage'
+import { host } from './utils/config'
 import { Toaster } from 'sonner'
-import EditarPerfilPage from './pages/perfil/EditarPerfilPage'
+import axios from 'axios'
 
 function App() {
     const dispatch = useDispatch();
@@ -79,7 +79,6 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-
       <Toaster richColors position="bottom-right" />
     </BrowserRouter>
   )

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from '../../shared/components/Card';
 import CardTitulo from '../../shared/components/CardTitulo';
 import { useSelector } from 'react-redux';
 import { LuPencil } from 'react-icons/lu';
 import AvatarUploader from './components/AvatarUploader';
+import ModalEditarPerfil from './components/ModalEditarPerfil';
 
 const EditarPerfilPage = () => {
     const usuario = useSelector(state => state?.auth?.usuario);
+    const [isOpenModal, setIsOpenModal] = useState(false);
 
     return (
         <Card>
@@ -25,11 +27,22 @@ const EditarPerfilPage = () => {
                         </div>
                     </div>
                 </div>
-
-                <button className="flex items-center justify-center cursor-pointer gap-2 rounded-full border border-gray-300 dark:border-gray-800 dark:bg-white/[0.01] px-4 py-3 font-medium text-sm">
+                <button 
+                    className="flex items-center justify-center cursor-pointer gap-2 rounded-full border border-gray-300 dark:border-gray-800 dark:bg-white/[0.01] px-4 py-3 font-medium text-sm"
+                    onClick={() => setIsOpenModal(true)}
+                >
                     <LuPencil /> Editar
                 </button>
             </div>
+
+            {/* Modal */}
+            {isOpenModal && (
+                <ModalEditarPerfil 
+                    isOpenModal={isOpenModal} 
+                    setIsOpenModal={() => setIsOpenModal(false)} 
+                    usuario={usuario}
+                />
+            )}
         </Card>
     );
 };
