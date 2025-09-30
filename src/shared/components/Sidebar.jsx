@@ -1,7 +1,6 @@
 import React from 'react';
-import { LuBox, LuChartBarBig, LuSettings, LuSyringe } from "react-icons/lu";
+import { LuChartBarBig, LuSettings } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
-import { LuPill } from "react-icons/lu";
 import { NavLink } from 'react-router-dom';
 import { toggleSidebar } from '../../store/sidebarSlice';
 
@@ -15,7 +14,7 @@ const Sidebar = () => {
             dispatch(toggleSidebar())
         }
     };
-
+    
     return (
         <aside 
             className={`fixed lg:static bg-white flex flex-col left-0 top-0 h-screen z-50 border-r border-gray-200 dark:border-gray-800

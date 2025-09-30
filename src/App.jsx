@@ -61,8 +61,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-    
-        {/* Rutas protegidas con Layout persistente  */}
         <Route
           path="/"
           element={
@@ -81,6 +79,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
+
       <Toaster richColors position="bottom-right" />
     </BrowserRouter>
   )

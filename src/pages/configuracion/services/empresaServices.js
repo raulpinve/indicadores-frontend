@@ -51,6 +51,15 @@ export const cambiarAvatarEmpresa = async (empresaId, archivo) => {
     }
 };
 
+export const eliminarAvatarEmpresa = async (empresaId) => {
+    try {
+        const response = await api.delete(`/empresas/${empresaId}/avatar`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data || error;
+    }
+};
+
 export const eliminarEmpresa = async (empresaId) => {
     try {
         const response = await api.delete(`/empresas/${empresaId}`); 
