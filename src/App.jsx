@@ -12,6 +12,7 @@ import { RiLoader4Fill } from 'react-icons/ri'
 import ConfiguracionPage from './pages/configuracion/ConfiguracionPage'
 import ConfiguracionEmpresaPage from './pages/configuracion/ConfiguracionEmpresaPage'
 import { Toaster } from 'sonner'
+import EditarPerfilPage from './pages/perfil/EditarPerfilPage'
 
 function App() {
     const dispatch = useDispatch();
@@ -72,6 +73,7 @@ function App() {
         >
           <Route path="/" element={<Navigate to="/configuracion" replace />} />
           <Route path="/configuracion" element={<ConfiguracionPage />} />
+          <Route path="/editar-perfil" element={<EditarPerfilPage />} />
           <Route path="/configuracion/empresas/:empresaId" element={<ConfiguracionEmpresaPage />} />
         </Route>
 

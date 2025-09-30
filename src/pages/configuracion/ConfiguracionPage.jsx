@@ -7,8 +7,8 @@ const ConfiguracionPage = () => {
         <>
             <Title>Configuración</Title>  
             <div className="grid mt-4">
-                <Usuarios /> 
-                <Empresas />
+                <Usuarios/> 
+                <Empresas/>
             </div>
         </>
     );

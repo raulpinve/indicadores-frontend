@@ -4,9 +4,6 @@ import { LuCircleUser, LuLogOut } from 'react-icons/lu';
 import { logout } from '../../store/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { host } from '../../utils/config';
-import imageDefault from "../../assets/images/image-default.png";
-
 
 const DropdownProfile = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,17 +27,13 @@ const DropdownProfile = () => {
 		};
     }, []);
 
-	const avatarUrl = `${host}${usuario?.avatarThumbnail}`;
+	const avatarUrl = `${usuario?.avatarThumbnail}`;
 	
     return (
       <div className="relative" ref={dropdownRef}>
 			<button className="flex items-center cursor-pointer focus:outline-none" onClick={toggleDropdown}>
 				<img 
 					src={avatarUrl}
-					onError={(e) => {
-						e.target.onerror = null; // Evita bucle si la imagen de fallback también falla
-						e.target.src = imageDefault; 
-					}}
 					alt="Perfil" 
 					className="w-10 h-10 object-cover rounded-full ml-1 mr-3"  
 				/>

@@ -31,9 +31,16 @@ const authSlice = createSlice({
             state.token = token;
         },
         actualizarAvatar: (state, action) => {
-            state.usuario.avatarThumbnail = action.payload.avatarThumbnail;
-            state.usuario.avatar = action.payload.avatar;
-        }
+            if (!state.usuario) return;
+
+            const { avatar, avatarThumbnail } = action.payload;
+
+            state.usuario = {
+                ...state.usuario,  // mantiene todas las demás propiedades intactas
+                avatar,
+                avatarThumbnail,
+            };
+        },
     }
 })
 

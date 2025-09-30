@@ -41,7 +41,7 @@ const ConfiguracionEmpresaPage = () => {
                 {empresa?.nombre || <SkeletonElement className="w-50 h-8" />}
             </Title>
 
-            <div className="grid grid-cols-[1.5fr_1fr]">
+            <div className='mt-4'>
                 <Procesos />
             </div>
         </div>

@@ -51,7 +51,7 @@ const Procesos = () => {
     }, [paginaActual, debouncedConsulta]);
 
     return (
-        <Card>
+        <Card className={`mt-4`}>
             <CardTitulo>Procesos</CardTitulo>
             <div className='flex items-center gap-2 mt-3'>
                 <Button
