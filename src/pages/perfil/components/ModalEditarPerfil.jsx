@@ -9,7 +9,7 @@ import { actualizarUsuario } from '../services/perfilServices';
 import { updateUser } from '../../../store/authSlice';
 import { useDispatch } from 'react-redux';
 
-const ModalEditarPerfil = ({ isOpenModal, setIsOpenModal, usuario }) => {
+const ModalEditarPerfil = ({ cerrarModal, usuario }) => {
     const { register, handleSubmit, setValue, setError, reset, formState: { errors } } = useForm({ mode: "onChange" });
     const [loading, setLoading] = useState(false);
     const [messageError, setMessageError] = useState(null);
@@ -35,7 +35,7 @@ const ModalEditarPerfil = ({ isOpenModal, setIsOpenModal, usuario }) => {
             dispatch(updateUser(values));
 
             toast.success("Perfil actualizado correctamente.");
-            setIsOpenModal(false);
+            cerrarModal();
             reset();
         } catch (error) {
             handleErrors(error, setError, setMessageError);
@@ -46,8 +46,8 @@ const ModalEditarPerfil = ({ isOpenModal, setIsOpenModal, usuario }) => {
 
     return (
         <Modal
-            isOpenModal={isOpenModal}
-            setIsOpenModal={setIsOpenModal}
+            isOpenModal={true}
+            setIsOpenModal={cerrarModal}
             title="Editar perfil"
             size="md"
         >

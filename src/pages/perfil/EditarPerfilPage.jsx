@@ -5,15 +5,16 @@ import { useSelector } from 'react-redux';
 import { LuPencil } from 'react-icons/lu';
 import AvatarUploader from './components/AvatarUploader';
 import ModalEditarPerfil from './components/ModalEditarPerfil';
+import ModalEditarPassword from './components/ModalEditarPassword';
 
 const EditarPerfilPage = () => {
     const usuario = useSelector(state => state?.auth?.usuario);
-    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [modalActivo, setModalActivo] = useState("");
 
     return (
         <Card>
             <CardTitulo>Editar perfil</CardTitulo>
-            <div className="mb-6 rounded-2xl border border-gray-200 p-5 lg:p-6 dark:border-gray-800 flex items-center justify-between gap-4">
+            <div className="mb-6 rounded-2xl border border-gray-200 p-5 lg:p-6 dark:border-gray-800 flex items-center justify-between gap-4 mt-4">
                 <div className="flex items-center gap-4">
                     <AvatarUploader avatarInicial={usuario.avatarThumbnail} />
                     <div className="order-3 xl:order-2">
@@ -29,17 +30,33 @@ const EditarPerfilPage = () => {
                 </div>
                 <button 
                     className="flex items-center justify-center cursor-pointer gap-2 rounded-full border border-gray-300 dark:border-gray-800 dark:bg-white/[0.01] px-4 py-3 font-medium text-sm"
-                    onClick={() => setIsOpenModal(true)}
+                    onClick={() => setModalActivo("editar-perfil")}
                 >
                     <LuPencil /> Editar
                 </button>
             </div>
 
+            <div className="mb-6 rounded-2xl border border-gray-200 p-5 lg:p-6 dark:border-gray-800 gap-4">
+                <CardTitulo>Configuraciones</CardTitulo>
+                <button 
+                    className="flex items-center justify-center cursor-pointer gap-2 rounded-full border border-gray-300 dark:border-gray-800 dark:bg-white/[0.01] px-4 py-3 font-medium text-sm"
+                    onClick={() => setModalActivo("editar-password")}
+                >
+                    <LuPencil /> Editar contraseña
+                </button>
+            </div>
+
             {/* Modal */}
-            {isOpenModal && (
+            {modalActivo === "editar-perfil" && (
                 <ModalEditarPerfil 
-                    isOpenModal={isOpenModal} 
-                    setIsOpenModal={() => setIsOpenModal(false)} 
+                    cerrarModal={() => setModalActivo("")}
+                    usuario={usuario}
+                />
+            )}
+
+            {modalActivo === "editar-password" && (
+                <ModalEditarPassword
+                    cerrarModal={() => setModalActivo("")}
                     usuario={usuario}
                 />
             )}

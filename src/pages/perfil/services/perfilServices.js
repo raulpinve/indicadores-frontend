@@ -29,6 +29,12 @@ export const actualizarUsuario = async (data) => {
     return respuesta.data;
 };
 
+export const actualizarPassword = async (data) => {
+    const respuesta = await api.put(`/perfil/password`, data);
+    return respuesta.data;
+};
+
+
 // Eliminar avatar
 export const eliminarAvatarUsuario = async () => {
     const respuesta = await api.delete(`/perfil/avatar`);
