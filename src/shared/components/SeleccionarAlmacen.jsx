@@ -1,19 +1,19 @@
-import { obtenerAlmacenes } from '../../pages/configuracion/services/almacenService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAlmacen } from '../../store/almacenSlice';
+import { setEmpresa } from '../../store/empresaSlice';
 import React, { useEffect, useState } from 'react';
 import { logout } from '../../store/authSlice';
 import { LuLogOut } from 'react-icons/lu';
 import Modal from './Modal';
+import { obtenerTodasEmpresas } from '../../pages/configuracion/services/empresaServices';
 
-const SeleccionarAlmacen = () => {
-    const [validandoAlmacen, setValidandoAlmacen] = useState(true);
-    const almacen = useSelector(state => state.almacen.almacen);
+const SeleccionarEmpresa = () => {
+    const [validandoEmpresa, setValidandoEmpresa] = useState(true);
+    const empresa = useSelector(state => state.empresa.empresa);
     const usuario = useSelector(state => state.auth.usuario);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const token = useSelector(state => state.auth.token);
-    const [almacenes, setAlmacenes] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
     const [loading, setLoading] = useState(false);
     const location = useLocation();
     const dispatch = useDispatch();
@@ -23,24 +23,24 @@ const SeleccionarAlmacen = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const validarAlmacenGuardado = async () => {
+        const validarEmpresaGuardada = async () => {
             setLoading(true);
             try {
-                const almacenLocal = localStorage.getItem('almacenSeleccionado');
-                const res = await obtenerAlmacenes(token);
-                setAlmacenes(res.data);
+                const empresaLocal = localStorage.getItem('empresaSeleccionada');
+                const res = await obtenerTodasEmpresas(token);
+                setEmpresas(res.data);
 
-                if (almacenLocal) {
-                    const almacenParseado = JSON.parse(almacenLocal);
-                    const almacenActualizado = res.data.find(a => a.id === almacenParseado.id);
+                if (empresaLocal) {
+                    const empresaParseada = JSON.parse(empresaLocal);
+                    const empresaActualizada = res.data.find(a => a.id === empresaParseada.id);
 
-                    if (almacenActualizado) {
-                        dispatch(setAlmacen(almacenActualizado));
-                        localStorage.setItem('almacenSeleccionado', JSON.stringify(almacenActualizado));
+                    if (empresaActualizada) {
+                        dispatch(setEmpresa(empresaActualizada));
+                        localStorage.setItem('empresaSeleccionada', JSON.stringify(empresaActualizada));
                         return;
                     }
-                    localStorage.removeItem('almacenSeleccionado');
-                    dispatch(setAlmacen(null));
+                    localStorage.removeItem('empresaSeleccionada');
+                    dispatch(setEmpresa(null));
                 }
 
                 setIsOpenModal(true);
@@ -48,39 +48,39 @@ const SeleccionarAlmacen = () => {
                 console.error('Error al validar almacén:', error);
                 setIsOpenModal(true);
             } finally {
-                setValidandoAlmacen(false);
+                setValidandoEmpresa(false);
                 setLoading(false);
             }
         };
 
-        validarAlmacenGuardado();
+        validarEmpresaGuardada();
     }, [dispatch, token]);
     
     // Este useEffect está bien si se necesita que el modal se cierre automáticamente cuando se elige un almacén desde otro componente
     useEffect(() => {
-        setIsOpenModal(!almacen);
-    }, [almacen]);
+        setIsOpenModal(!empresa);
+    }, [empresa]);
 
     // Obtiene el listado de almacenes cuando cambia el valor de almacén
     useEffect(() => {
-        const refrescarAlmacenes = async () => {
+        const refrescarEmpresas = async () => {
             try {
-                const res = await obtenerAlmacenes(token);
-                setAlmacenes(res.data);
+                const res = await obtenerTodasEmpresas(token);
+                setEmpresas(res.data);
             } catch (error) {
-                console.error('Error al refrescar almacenes:', error);
+                console.error('Error al refrescar empresas:', error);
             }
         };
 
-        refrescarAlmacenes();
-    }, [almacen, token]);
+        refrescarEmpresas();
+    }, [empresa, token]);
 
     return (
-        !validandoAlmacen && !almacen && !enRutaExcluida && (
+        !validandoEmpresa && !empresa && !enRutaExcluida && (
             <Modal
                 isOpenModal={isOpenModal}
                 setIsOpenModal={() => setIsOpenModal(false)}
-                title="Seleccionar almacén"
+                title="Seleccionar empresa"
                 size="md"
                 allowClose= { false }
             >
@@ -93,21 +93,20 @@ const SeleccionarAlmacen = () => {
 
                     {/* Mostrando contenido */}
                     {!loading && (<>
-                        {almacenes.length === 0 ? (
+                        {empresas.length === 0 ? (
                             <div className="text-sm">
                                 {usuario.rol === "superadmin" ? (<>
-                                    <p className="mb-4">No tienes almacenes creados. Crea uno para comenzar.</p>
+                                    <p className="mb-4">No tienes empresas creadas. Crea uno para comenzar.</p>
                                     <button 
                                         onClick={() => {
-                                            navigate('/configuracion'); // Ajustá esta ruta si es distinta
-                                            localStorage.setItem('activeTab', "Almacenes")
+                                            navigate('/configuracion')
                                         }}
                                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                                     >
-                                        Crear almacén
+                                        Crear empresa
                                     </button>
                                 </>) : (<>
-                                    <p className="mb-4">No tienes acceso a ningún almacén. Pídele a tu administrador que cree uno nuevo o que te otorgue permisos para acceder a uno existente.</p>
+                                    <p className="mb-4">No tienes acceso a ningún empresa. Pídele a tu administrador que cree una nueva o que te otorgue permisos para acceder a una existente.</p>
                                     <button 
                                         onClick={() => {
                                             dispatch(logout())
@@ -121,21 +120,21 @@ const SeleccionarAlmacen = () => {
                             </div>
                         ) : (
                             <div className=''>
-                                <p className='text-sm'>Por favor selecciona un almacén para continuar: </p>
+                                <p className='text-sm'>Por favor selecciona una empresa para continuar: </p>
                                 <ul className="space-y-2 dark:text-gray-300 mt-3 divide-y py-1 divide-gray-200">
-                                    {almacenes.map(almacen => (
+                                    {empresas.map(empresa => (
                                         <li 
-                                            key={almacen.id} 
+                                            key={empresa.id} 
                                             className="cursor-pointer hover:font-medium select-none p-1"
                                             onClick={() => {
-                                                localStorage.setItem('almacenSeleccionado', JSON.stringify(almacen));
-                                                dispatch(setAlmacen(almacen));
+                                                localStorage.setItem('empresaSeleccionada', JSON.stringify(empresa));
+                                                dispatch(setEmpresa(empresa));
 
                                                 const primerSegmento = location.pathname.split('/')[1];
                                                 navigate(`/${primerSegmento}`);
                                             }}
                                         >
-                                            {almacen.nombre}
+                                            {empresa.nombre}
                                         </li>
                                     ))}
                                 </ul>
@@ -150,4 +149,4 @@ const SeleccionarAlmacen = () => {
     );
 };
 
-export default SeleccionarAlmacen;
+export default SeleccionarEmpresa;

@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { handleErrors } from '../../../utils/handleErrors';
 import MessageError from '../../../shared/components/MessageError';
 import Button from '../../../shared/components/Button';
-import { useSelector } from 'react-redux';
 import { actualizarPassword } from '../services/perfilServices';
 
 const ModalEditarPassword = (props) => {

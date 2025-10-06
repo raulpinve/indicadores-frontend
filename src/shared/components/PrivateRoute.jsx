@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-// import SeleccionarAlmacen from "./SeleccionarAlmacen.jsx";
+import SeleccionarEmpresa from "./SeleccionarAlmacen";
 // import VerificarEmail from "./VerificarEmail";
 
 const PrivateRoute = ({ children }) => {
@@ -13,7 +13,7 @@ const PrivateRoute = ({ children }) => {
   return (
     <>
       {children}
-      {/* <SeleccionarAlmacen /> */}
+      <SeleccionarEmpresa />
       {/* <VerificarEmail /> */}
     </>
   );

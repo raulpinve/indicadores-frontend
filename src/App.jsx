@@ -13,6 +13,8 @@ import { RiLoader4Fill } from 'react-icons/ri'
 import { host } from './utils/config'
 import { Toaster } from 'sonner'
 import axios from 'axios'
+import IndicadoresPage from './pages/indicadores/IndicadoresPage'
+import CrearIndicadorPage from './pages/indicadores/crearIndicadorPage'
 
 function App() {
     const dispatch = useDispatch();
@@ -46,6 +48,7 @@ function App() {
 
     // Configuración para toaster
     const [isDark, setIsDark] = useState();
+
     useEffect(() => {
       setIsDark(localStorage.getItem("theme") === "dark")
     }, [])
@@ -71,6 +74,8 @@ function App() {
         >
           <Route path="/" element={<Navigate to="/configuracion" replace />} />
           <Route path="/configuracion" element={<ConfiguracionPage />} />
+          <Route path="/indicadores" element={<IndicadoresPage />} />
+          <Route path="/indicadores/crear" element={<CrearIndicadorPage />} />
           <Route path="/editar-perfil" element={<EditarPerfilPage />} />
           <Route path="/configuracion/empresas/:empresaId" element={<ConfiguracionEmpresaPage />} />
         </Route>

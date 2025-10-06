@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../../store/sidebarSlice';
 import DropdownProfile from './DropdownProfile';
 import { useDarkMode } from "../hooks/useDarkMode"; 
-import { deleteAlmacen } from '../../store/almacenSlice';
+import { deleteEmpresa } from '../../store/empresaSlice';
 import { useLocation } from 'react-router-dom';
 
 const Header = () => {
     const dispatch = useDispatch();
     const { darkMode, toggleDarkMode } = useDarkMode();
     const location = useLocation();
-    const almacen = useSelector(state => state.almacen.almacen);
+    const empresa = useSelector(state => state.empresa.empresa);
 
     return (
         <header className="sticky top-0 w-full border-b border-gray-200 z-50 bg-white px-3 lg:px-0 dark:bg-gray-900 bg- dark:text-gray-200 dark:border-gray-800 transition-colors">
@@ -31,13 +31,13 @@ const Header = () => {
           <div className="flex justify-between items-center gap-2">
              {/* Nombre almacén */}
               <h3 className={`text-xs uppercase leading-[20px] text-gray-500 font-medium ellipsis select-none cursor-pointer`}>
-                {almacen?.nombre && location.pathname !== "/configuracion" && (
+                {empresa?.nombre && location.pathname !== "/configuracion" && (
                       <p
                         onClick={() => {
-                          localStorage.removeItem('almacenSeleccionado');
-                          dispatch(deleteAlmacen());
+                          localStorage.removeItem('empresaSeleccionada');
+                          dispatch(deleteEmpresa());
                         }}
-                      >{almacen.nombre}</p>
+                      >{empresa.nombre}</p>
                   )}
               </h3>
 
