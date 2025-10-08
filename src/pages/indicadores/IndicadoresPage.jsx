@@ -131,10 +131,25 @@ const IndicadoresPage = () => {
                         {!loading && !error && indicadores.length > 0 && (
                             <>
                                {indicadores.map(indicador => {
-                                    const resultado = indicador?.ultimoResultado?.resultado;
+                                    const valor = indicador?.ultimoResultado?.valor;
                                     const estado = indicador?.ultimoResultado?.estadoResultado;
-                                    const vrup = indicador?.ultimoResultado?.vrup;
-                                    const tendencia = vrup > 0 ? "mejora": "empeora"; 
+                                    const vrupRaw = indicador?.ultimoResultado?.vrup;
+                                    const direccion = indicador?.ultimoResultado?.direccionMeta;
+
+                                    // Convertir VRUP a número
+                                    const vrup = vrupRaw !== null && vrupRaw !== undefined ? parseFloat(vrupRaw) : null;
+
+                                    // Determinar tendencia (según dirección de la meta)
+                                    let tendencia = null;
+                                    if (vrup !== null && !isNaN(vrup)) {
+                                        if (direccion === "asc") {
+                                            tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
+                                        } else if (direccion === "desc") {
+                                            tendencia = vrup > 0 ? "empeora" : vrup < 0 ? "mejora" : "sin cambio";
+                                        } else {
+                                            tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
+                                        }
+                                    }
 
                                     // Color y símbolo según tendencia
                                     let vrupColor = "text-gray-500";
@@ -150,10 +165,9 @@ const IndicadoresPage = () => {
 
                                     return (
                                         <tr 
-                                            key={indicador.id} className="cursor-pointer text-sm"
-                                            onClick={() => {
-                                                redireccionarVersionIndicador(indicador.id)
-                                            }}
+                                            key={indicador.id} 
+                                            className="cursor-pointer text-sm hover:bg-gray-50 transition-colors"
+                                            onClick={() => redireccionarVersionIndicador(indicador.id)}
                                         >
                                             {/* Nombre del indicador */}
                                             <TableTd className="flex items-center gap-3">
@@ -162,17 +176,17 @@ const IndicadoresPage = () => {
 
                                             {/* Último resultado y estado */}
                                             <TableTd>
-                                                {resultado && estado ? (
+                                                {valor && estado ? (
                                                     <div className="flex items-center gap-2 font-semibold">
-                                                        <span>{resultado}</span>
+                                                        <span>{valor}</span>
                                                         {estado === "optimo" && (
-                                                            <div className="bg-green-200 rounded-lg p-2 text-slate-800">Óptimo</div>
+                                                            <div className="bg-green-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Óptimo</div>
                                                         )}
                                                         {estado === "critico" && (
-                                                            <div className="bg-red-200 rounded-lg p-2 text-slate-800">Crítico</div>
+                                                            <div className="bg-red-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Crítico</div>
                                                         )}
                                                         {estado === "aceptable" && (
-                                                            <div className="bg-yellow-200 rounded-lg p-2 text-slate-800">Aceptable</div>
+                                                            <div className="bg-yellow-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Aceptable</div>
                                                         )}
                                                     </div>
                                                 ) : (
@@ -182,9 +196,9 @@ const IndicadoresPage = () => {
 
                                             {/* VRUP con flecha y color */}
                                             <TableTd>
-                                                {vrup !== null && vrup !== undefined ? (
+                                                {vrup !== null && !isNaN(vrup) ? (
                                                     <p className={`flex items-center gap-1 font-semibold ${vrupColor}`}>
-                                                        {vrupIcon} {Math.round(Math.abs(vrup))} %
+                                                        {vrupIcon} {Math.abs(Math.round(vrup))} %
                                                     </p>
                                                 ) : (
                                                     <p>—</p>
@@ -198,6 +212,8 @@ const IndicadoresPage = () => {
                                         </tr>
                                     );
                                 })}
+
+
 
                             </>
                         )}
