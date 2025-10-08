@@ -7,18 +7,21 @@ import TableThead from '../../shared/components/TableThead';
 import TableTh from '../../shared/components/TableTh';
 import TableTd from '../../shared/components/TableTd';
 import TableTbody from '../../shared/components/TableTbody';
-import { Link } from 'react-router-dom';
-import { obtenerTodosIndicadores } from './services/indicadoresServices';
+import { Link, useNavigate } from 'react-router-dom';
+import { obtenerUltimasVersiones } from './services/indicadoresServices';
 import { useSelector } from 'react-redux';
 import useDebounce from '../../shared/hooks/useDebounce';
 import Pagination from '../../shared/components/Pagination';
 import SkeletonTable from '../../shared/components/SkeletonTable';
-import { LuEraser, LuPencil } from 'react-icons/lu';
+import { LuChevronDown } from 'react-icons/lu';
+import { obtenerTodosProcesos } from './services/procesosServices';
+import { toast } from 'sonner';
 
 const IndicadoresPage = () => {
-    const [indicadorSeleccionado, setIndicadorSeleccionado] = useState(null);
+    const [procesoSeleccionado, setProcesoSeleccionado] = useState("");
     const empresaId = useSelector(state => state?.empresa?.empresa?.id);
     const [modalActivo, setModalActivo] = useState("");
+    const [procesos, setProcesos] = useState([]);
     const [consulta, setConsulta] = useState("");
     const [loading, setLoading] = useState(null);
     const [indicadores, setIndicadores] = useState([]);
@@ -26,16 +29,16 @@ const IndicadoresPage = () => {
     const debouncedConsulta = useDebounce(consulta, 500);
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
+    const navigate = useNavigate();
 
     // Obtener indicadores
-   useEffect(() => {
-
+    useEffect(() => {
         const fetchEmpresas = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                const respuesta = await obtenerTodosIndicadores(paginaActual, debouncedConsulta, empresaId);
+                const respuesta = await obtenerUltimasVersiones(paginaActual, debouncedConsulta, empresaId, procesoSeleccionado);
                 setIndicadores(respuesta.data);
                 setPaginaActual(respuesta.paginacion.pagina);
                 setTotalPaginas(respuesta.paginacion.totalPaginas);
@@ -46,9 +49,24 @@ const IndicadoresPage = () => {
             }
         };
         if(empresaId) fetchEmpresas();
-    }, [paginaActual, debouncedConsulta, empresaId]);
+    }, [paginaActual, debouncedConsulta, empresaId, procesoSeleccionado]);
 
-    console.log(indicadores)
+    const redireccionarVersionIndicador = (versionId) => {
+        navigate(`/indicadores/${versionId}`);
+    }
+
+    // Cargar todos los procesos de la empresa
+    useEffect(() => {
+        const fecthProcesos = async() => {
+            try {
+                const respuesta = await obtenerTodosProcesos(empresaId);
+                setProcesos(respuesta.data);
+            } catch (error) {
+                toast.error(error?.response?.data?.message || "Error interno. Vuelve a intentarlo.")
+            }
+        }
+        if(empresaId) fecthProcesos(); 
+    }, [empresaId])
 
     return (
         <div>
@@ -57,6 +75,33 @@ const IndicadoresPage = () => {
                     Indicadores 
                     <Link to="/indicadores/crear" className='ml-3 p-2 text-sm rounded-lg bg-blue-600 text-white dark:bg-blue-200 dark:text-slate-800'>Crear</Link>
                 </CardTitulo>
+                {/* Filtros para buscar indicador */}
+                <div className="mt-3 flex items-center gap-2">
+                    <input
+                        type="text"
+                        className="input-form w-50"
+                        placeholder="Buscar..."
+                        onChange={(e) => setConsulta(e.target.value)}
+                    />
+                    <div className='relative'>
+                        <select 
+                            className="select-form w-50"
+                            onChange={(e) => setProcesoSeleccionado(e.target.value)}
+                        >
+                            <option value="">Seleccionar proceso...</option>
+                            {procesos.map(proceso => {
+                                return <option 
+                                    key={proceso.id}
+                                    value={proceso.id}
+                                >
+                                    {proceso.nombre}
+                                </option>
+                            })}
+                        </select>
+                        <LuChevronDown className="absolute top-[15px] right-3" />
+                    </div>
+                </div>
+
                 <Table>
                     <TableThead>
                         <tr className="text-left">
@@ -64,13 +109,12 @@ const IndicadoresPage = () => {
                             <TableTh>Estado actual</TableTh>
                             <TableTh>VRUP</TableTh>
                             <TableTh>Proceso</TableTh>
-                            <TableTh>Acciones</TableTh>
                         </tr>
                     </TableThead>
                 
                     {/* Loading */}
                     {loading && (
-                        <SkeletonTable rows={7} columns={6}/>
+                        <SkeletonTable rows={7} columns={4}/>
                     )}
                     <TableTbody>
                         {/* Mostrar error */}
@@ -87,14 +131,14 @@ const IndicadoresPage = () => {
                         {!loading && !error && indicadores.length > 0 && (
                             <>
                                {indicadores.map(indicador => {
-                                    const resultado = indicador?.ultimoRegistro?.resultado;
-                                    const estado = indicador?.ultimoRegistro?.estadoResultado;
-                                    const vrup = indicador?.ultimoRegistro?.vrup;
-                                    const tendencia = indicador?.ultimoRegistro?.tendenciaResultado; // "mejora" o "empeora"
+                                    const resultado = indicador?.ultimoResultado?.resultado;
+                                    const estado = indicador?.ultimoResultado?.estadoResultado;
+                                    const vrup = indicador?.ultimoResultado?.vrup;
+                                    const tendencia = vrup > 0 ? "mejora": "empeora"; 
 
                                     // Color y símbolo según tendencia
                                     let vrupColor = "text-gray-500";
-                                    let vrupIcon = "→";
+                                    let vrupIcon = "";
 
                                     if (tendencia === "mejora") {
                                         vrupColor = "text-green-600";
@@ -105,10 +149,15 @@ const IndicadoresPage = () => {
                                     }
 
                                     return (
-                                        <tr key={indicador.id} className="cursor-pointer">
+                                        <tr 
+                                            key={indicador.id} className="cursor-pointer text-sm"
+                                            onClick={() => {
+                                                redireccionarVersionIndicador(indicador.id)
+                                            }}
+                                        >
                                             {/* Nombre del indicador */}
                                             <TableTd className="flex items-center gap-3">
-                                                <p>{indicador?.ultimaVersion?.nombre}</p>
+                                                <p>{indicador?.nombre}</p>
                                             </TableTd>
 
                                             {/* Último resultado y estado */}
@@ -145,34 +194,6 @@ const IndicadoresPage = () => {
                                             {/* Nombre del proceso */}
                                             <TableTd>
                                                 <p>{indicador?.procesoNombre}</p>
-                                            </TableTd>
-
-                                            {/* Botones */}
-                                            <TableTd>
-                                                <div className="text-gray-700 dark:text-gray-400 flex gap-2">
-                                                    <button
-                                                        className="cursor-pointer p-1"
-                                                        title="Editar indicador"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setModalActivo("editar");
-                                                            setIndicadorSeleccionado(indicador);
-                                                        }}
-                                                    >
-                                                        <LuPencil />
-                                                    </button>
-                                                    <button
-                                                        className="cursor-pointer p-1"
-                                                        title="Eliminar indicador"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setIndicadorSeleccionado(indicador);
-                                                            setModalActivo("eliminar");
-                                                        }}
-                                                    >
-                                                        <LuEraser />
-                                                    </button>
-                                                </div>
                                             </TableTd>
                                         </tr>
                                     );
