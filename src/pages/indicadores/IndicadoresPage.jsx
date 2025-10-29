@@ -75,6 +75,7 @@ const IndicadoresPage = () => {
                     Indicadores 
                     <Link to="/indicadores/crear" className='ml-3 p-2 text-sm rounded-lg bg-blue-600 text-white dark:bg-blue-200 dark:text-slate-800'>Crear</Link>
                 </CardTitulo>
+                
                 {/* Filtros para buscar indicador */}
                 <div className="mt-3 flex items-center gap-2">
                     <input
