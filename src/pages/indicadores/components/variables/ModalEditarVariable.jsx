@@ -72,8 +72,8 @@ const ModalEditarVariable = (props) => {
                                 message: "Debe tener al menos 3 caracteres",
                             },
                             maxLength: {
-                                value: 15,
-                                message: "No puede tener más de 15 caracteres"
+                                value: 100,
+                                message: "No puede tener más de 100 caracteres"
                             }
                         })}
                     />
@@ -89,7 +89,7 @@ const ModalEditarVariable = (props) => {
                         type="text"
                         placeholder="Alias de la variable" 
                         className={`input-form ${errors.alias ? 'input-form-error' : ''}`}
-                        {...register("alias", {
+                            {...register("alias", {
                             required: "El alias es obligatorio",
                             minLength: {
                                 value: 1, 
@@ -102,6 +102,16 @@ const ModalEditarVariable = (props) => {
                             pattern: {
                                 value: /^[A-Za-z_]+$/,
                                 message: "El alias solo puede contener letras y guion bajo"
+                            },
+                            validate: {
+                                notReserved: (value) => {
+                                const reserved = [
+                                    "sin","cos","tan","asin","acos","atan","log","ln","sqrt","abs","max","min","exp",
+                                    "pow","pi","e","sum","int","lim","frac","left","right","cdot","times",
+                                    "begin","end","over","imaginaryI","x","y","i","cccc"
+                                ];
+                                return !reserved.includes(value.toLowerCase()) || "No puede usar una palabra reservada";
+                                }
                             }
                         })}
                     />

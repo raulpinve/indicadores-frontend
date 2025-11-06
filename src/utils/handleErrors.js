@@ -2,7 +2,7 @@ const handleErrors = (err, setError, setMessageError) => {
   const responseData = err?.response?.data || err; // si no hay response.data, tomo el err completo
   const fieldErrors = responseData?.error?.fieldErrors;
 
-  if (responseData?.statusCode === 400 && Array.isArray(fieldErrors)) {
+  if (responseData?.statusCode === 400 && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
     fieldErrors.forEach(({ field, message }) => {
       setError(field, {
         type: "server",

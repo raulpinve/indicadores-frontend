@@ -6,3 +6,7 @@ export const obtenerUltimasVersiones = async (pagina, consulta, empresaId, proce
     });
     return response.data;
 };
+
+export const crearIndicador = async (values) =>{
+    const response = await api.post("/indicadores", values);
+}

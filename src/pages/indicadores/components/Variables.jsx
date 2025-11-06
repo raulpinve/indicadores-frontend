@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '../../../shared/components/Table';
 import TableThead from '../../../shared/components/TableThead';
 import TableTh from '../../../shared/components/TableTh';
@@ -15,18 +15,28 @@ const Variables = ({ variables, setVariables }) => {
     const [modalActivo, setModalActivo] = useState("");
     const [variableSeleccionada, setVariableSeleccionada] = useState();
 
+    useEffect(() => {
+        setVariables([{
+            id: "fgfgfgf", 
+            nombre: "Nombre variable",
+            alias: "variable",
+            descripcion: "Descripción de la variable"
+        }])
+    }, [])
+
     return (    
         <>
-            <div className="mt-8">
-                <h4 className='font-semibold'>Variables</h4>
-                <Button
-                    type={`button`}
-                    onClick={() => setModalActivo("crear-variable")}
-                    colorButton={`primary`}
-                    className='btn-sm'
-                >
-                    Agregar
-                </Button>
+            <div className="mt-6">
+                <div className="flex items-center gap-2 mt-2">
+                    <h4 className='font-semibold'>Variables</h4>
+                    <button
+                        type='button'
+                        onClick={() => setModalActivo("crear-variable")}
+                        className='button-form-primary font-normal text-sm py-1 px-2'
+                    >
+                        Agregar
+                    </button>
+                </div>
             </div>
             <Table>
                 <TableThead>
@@ -43,7 +53,8 @@ const Variables = ({ variables, setVariables }) => {
                             <TableTd colSpan={4} >No hay variables registradas</TableTd>
                         </TableTr>
                     )}
-                    {variables.length > 0 && variables.map( variable => <TableTr key={variable.id}>
+                    {variables.length > 0 && variables.map( variable => 
+                        <TableTr key={variable.id}>
                             <TableTd>{variable.nombre}</TableTd>
                             <TableTd>{variable.alias}</TableTd>
                             <TableTd>{variable.descripcion}</TableTd>

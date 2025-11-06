@@ -1,26 +1,99 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../shared/components/Card';
 import { useForm } from 'react-hook-form';
 import { LuChevronDown, LuPencil, LuTrash2 } from 'react-icons/lu';
 import FormulaEditor from './components/FormulaEditor';
 import Variables from './components/Variables';
-import { v4 as uuidv4 } from "uuid";
+import Button from '../../shared/components/Button';
+import { useNavigate } from 'react-router-dom';
+import { handleErrors } from '../../utils/handleErrors';
+import { crearIndicador } from './services/indicadoresServices';
+import MessageError from '../../shared/components/MessageError';
+import { obtenerTodosProcesos } from '../configuracion/services/procesoServices';
+import { useSelector } from 'react-redux';
 
 const CrearIndicadorPage = () => {
-    const {register, handleSubmit, setError, formState: { errors }, trigger, setFocus , watch, reset, setValue} = useForm({ mode: 'onChange' });
+    const {register, handleSubmit, setError, formState: { errors }, trigger, clearErrors, setFocus , watch, reset, setValue, formState} = useForm({ mode: 'onChange' });
+    const empresaId = useSelector(state => state?.empresa?.empresa?.id);
+    const [unidadMedidaSymbol, setUnidadMediaSymbol] = useState("%");
     const [isMetaAbsoluta, setIsMetaAbsoluta] = useState(true);
-    const [variables, setVariables] = useState([{
-        id: uuidv4(),
-        nombre: "variable 1",
-        alias: "variable", 
-        descripcion: "Descripción de la variable"
-    }]);
+    const [messageError, setMessageError] = useState(false);
+    const [formulaLaTex, setFormulaLaTex] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [variables, setVariables] = useState([]);
+    const [procesos, setProcesos] = useState([]);
+    const navigate = useNavigate();
+    
+    // obtener todos los procesos
+    useEffect(() => {
+        const fetchProcesos = async () => {
+            try {
+                const result = await obtenerTodosProcesos(1, "", empresaId);
+                setProcesos(result.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        if(empresaId){
+            fetchProcesos();
+        }
+    }, [empresaId])
+
+    const enviarFormulario = () => {
+        handleSubmit(onSubmit)();
+    }
+
+    const onSubmit = async (data) => {
+        clearErrors("formulaLaTex");
+        clearErrors("variables");
+        setMessageError(false);
+        
+        // Validaciones
+        if(formulaLaTex.length === 0){
+            setError("formulaLaTex", {
+                type: "manual", 
+                message: "La formula no puede estar vacía"
+            })
+            return;
+        } if(variables.length === 0){
+            setError("variables", {
+                type: "manual", 
+                message: "Debe enviar al menos una variable"
+            })
+            return;
+        }
+        setLoading(true);
+
+        try {
+            await crearIndicador({
+                ...data, 
+                variables, 
+                formulaLaTex: formulaLaTex
+            });
+            navigate("/indicadores");
+        } catch (err) {
+            handleErrors(err, setError, setMessageError);
+        } finally{
+            setLoading(false);
+        }
+    }
+
+    useEffect(() =>{
+        setValue("nombre", "Nombre del indicador");
+        setValue("proposito", "El propósito  del indicador");
+        setValue("descripcion", "La descripción del indicador");
+        setValue("frecuenciaMedicion", "mensual");
+        setValue("unidadMedida", "porcentaje");
+        setValue("tipoMeta", "absoluta");
+        setValue("direccion", "asc");
+        setValue("goalValueOptimo", 60);
+    }, [])
 
     return (
         <div>
             <Card>
                 <h2 className='font-semibold text-xl'>Crear indicador</h2>
-                <form className='mt-4' action="" autoComplete='off'>
+                <form className='mt-4' autoComplete='off'>
                     <h3 className='font-semibold my-4'>Información general</h3>
                     <div className='grid grid-cols-2 gap-4'>
                         <div>
@@ -141,13 +214,14 @@ const CrearIndicadorPage = () => {
                                 <label htmlFor="unidadMedida" className='label-form'>Unidad de medida<span className='text-red-600'>*</span></label>
                                 <div className="relative">
                                     <select 
-                                            className={`input-form ${errors.unidadMedida ? 'input-form-error' : ''}`}
+                                        className={`input-form ${errors.unidadMedida ? 'input-form-error' : ''}`}
                                         id="unidadMedida"
                                         {...register('unidadMedida', {
                                             required: {
                                                 value: true,
                                                 message: "Debe seleccionar una unidad de medida válida"
-                                            }
+                                            }, 
+                                            onChange: (e) => setUnidadMediaSymbol(e.target.value === "porcentaje"? "%":"")
                                         })}
                                     >
                                         <option value="">Seleccionar...</option>
@@ -160,6 +234,32 @@ const CrearIndicadorPage = () => {
                                     <p className="input-message-error">{errors.unidadMedida.message}</p>
                                 )}
                             </div>  
+
+                            {/* Proceso */}
+                            <div>
+                                <label htmlFor="procesoId" className='label-form'>Proceso<span className='text-red-600'>*</span></label>
+                                <div className="relative">
+                                    <select 
+                                        className={`input-form ${errors.procesoId ? 'input-form-error' : ''}`}
+                                        id="procesoId"
+                                        {...register('procesoId', {
+                                            required: {
+                                                value: true,
+                                                message: "Debe seleccionar un proceso"
+                                            }
+                                        })}
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {procesos.map(proceso => 
+                                            <option value={proceso.id} key={proceso.id}>{proceso.nombre}</option>
+                                         )}
+                                    </select>
+                                    <LuChevronDown className='absolute top-3.5 right-3' />
+                                </div>
+                                {(errors.procesoId && errors.procesoId.message) && (
+                                    <p className="input-message-error">{errors.procesoId.message}</p>
+                                )}
+                            </div>
 
                             {/* Tipo de meta */}
                             <div>
@@ -178,6 +278,7 @@ const CrearIndicadorPage = () => {
                                             }
                                         })}
                                     >
+                                        <option value="">Seleccionar...</option>
                                         <option value="absoluta">Absoluta</option>
                                         <option value="escala">Escala</option>
                                     </select>
@@ -211,173 +312,103 @@ const CrearIndicadorPage = () => {
                             {/* Valor de la meta */}
                             {isMetaAbsoluta ? (
                                 <div>
-                                    <label htmlFor='goalValueOptimo' className='label-form'>Meta<span className='text-red-600'>*</span></label>
+                                    <label htmlFor='valorMeta' className='label-form'>Valor de la meta<span className='text-red-600'>*</span></label>
                                     <div className='flex gap-2 items-center'>
-                                        <select 
-                                            className={`${errors.valorMeta ? 'input-form-error' : ''} input-form w-[60px]`}
-                                            {...register('valorMeta', {
-                                                required: {
-                                                    value: true, 
-                                                    message: "Debe seleccionar un condicional."
-                                                }
-                                            })}
-                                        >
-                                            <option value="mayor_que">&gt;</option>
-                                            <option value="mayor_igual_que">&ge;</option>
-                                            <option value="menor_que">&lt;</option>
-                                            <option value="menor_igual_que">&le;</option>
-                                        </select>
                                         <input 
                                             type="number" 
-                                            className={`${errors.goalValueOptimo ? 'input-form-error' : ''} input-form w-[60px]`}
-                                            id="goalValueOptimo"
-                                            {...register('goalValueOptimo', {
+                                            className={`${errors.valorMeta ? 'input-form-error' : ''} input-form w-[90px]`}
+                                            id="valorMeta"
+                                            {...register('valorMeta', {
                                                 required: {
                                                     value: true, 
                                                     message: "El valor de la meta debe ser numérico."
                                                 }
                                             })}
+                                            min={0}
                                         />
-                                        {/* {unidadMedidaSymbol && (
+                                        {unidadMedidaSymbol && (
                                             <span>{unidadMedidaSymbol}</span>
-                                        )} */}
+                                        )}
                                     </div>
                                     {(errors.valorMeta && errors.valorMeta.message) && (
                                         <p className="input-message-error">{errors.valorMeta.message}</p>
                                     )}
-                                    {(errors.goalValueOptimo && errors.goalValueOptimo.message) && (
-                                        <p className="input-message-error">{errors.goalValueOptimo.message}</p>
-                                    )}
                                 </div>
                             ):(
                                 <div>
-                                    <label className='label-form' htmlFor='goalValueOptimo'>Meta<span className='text-red-600'>*</span></label>
+                                    <label className='label-form' htmlFor='optimo'>Valor de la meta<span className='text-red-600'>*</span></label>
                                     {/* Optimo */}
                                     <div>
-                                        <div className='grid grid-cols-[80px_60px_100px] gap-2 items-center mt-2'>
+                                        <div className='grid grid-cols-[80px_90px_100px] gap-2 items-center mt-2'>
                                             <label className='label-form'>Óptimo: </label> 
-                                            <select 
-                                                className={`${errors.goalConditionalOptimo ? 'input-form-error' : ''} input-form w-[60px]`}
-                                                {...register('goalConditionalOptimo', {
+                                            <input 
+                                                type="number" 
+                                                id="optimo"
+                                                className={`${errors.optimo ? 'input-form-error' : ''} input-form w-[90px]`}
+                                                {...register('optimo', {
                                                     required: {
                                                         value: true, 
-                                                        message: "Debe seleccionar un condicional."
+                                                        message: "El valor de la meta debe ser numérico."
                                                     }
                                                 })}
-                                            >
-                                                <option value="mayor_que">&gt;</option>
-                                                <option value="mayor_igual_que">&ge;</option>
-                                                <option value="menor_que">&lt;</option>
-                                                <option value="menor_igual_que">&le;</option>
-                                            </select>
-                                            <div>
-                                                <input 
-                                                    type="number" 
-                                                    id="goalValueOptimo"
-                                                    className={`${errors.goalValueOptimo ? 'input-form-error' : ''} input-form w-[60px]`}
-                                                    {...register('goalValueOptimo', {
-                                                        required: {
-                                                            value: true, 
-                                                            message: "El valor de la meta debe ser numérico."
-                                                        }
-                                                    })}
-                                                />
-                                                {/* {unidadMedidaSymbol && (
-                                                    <span className='ml-2'>{unidadMedidaSymbol}</span>
-                                                )} */}
-                                            </div>
+                                                min={0}
+                                            />
+                                            {unidadMedidaSymbol && (
+                                                <span>{unidadMedidaSymbol}</span>
+                                            )}
                                         </div>
-                                        {(errors.goalConditionalOptimo && errors.goalConditionalOptimo.message) && (
-                                            <p className="input-message-error">{errors.goalConditionalOptimo.message}</p>
-                                        )}
-                                        {(errors.goalValueOptimo && errors.goalValueOptimo.message) && (
-                                            <p className="input-message-error">{errors.goalValueOptimo.message}</p>
+                                        {(errors.optimo && errors.optimo.message) && (
+                                            <p className="input-message-error">{errors.optimo.message}</p>
                                         )}
                                     </div>
                                     
-                                    {/* Aceptable */}
+                                    {/* bueno */}
                                     <div>
-                                        <div className='grid grid-cols-[80px_60px_100px] gap-2 items-center mt-2'>
-                                            <label className='label-form' htmlFor='goalValueAceptable'>Aceptable: </label> 
-                                            <select 
-                                                className={`${errors.goalConditionalAceptable ? 'input-form-error' : ''} input-form w-[60px]`}
-                                                {...register('goalConditionalAceptable', {
+                                        <div className='grid grid-cols-[80px_90px_100px] gap-2 items-center mt-2'>
+                                            <label className='label-form' htmlFor='aceptable'>Bueno: </label> 
+                                            <input 
+                                                type="number" 
+                                                className={`${errors.bueno ? 'input-form-error' : ''} input-form w-[90px]`}
+                                                id="bueno"
+                                                {...register('bueno', {
                                                     required: {
                                                         value: true, 
-                                                        message: "Debe seleccionar un condicional."
+                                                        message: "El valor de la meta debe ser numérico."
                                                     }
                                                 })}
-                                            >
-                                                <option value="mayor_que">&gt;</option>
-                                                <option value="mayor_igual_que">&ge;</option>
-                                                <option value="menor_que">&lt;</option>
-                                                <option value="menor_igual_que">&le;</option>
-                                            </select>
-                                            <div>
-                                                <input 
-                                                    type="number" 
-                                                    className={`${errors.goalValueAceptable ? 'input-form-error' : ''} input-form w-[60px]`}
-                                                    id="goalValueAceptable"
-                                                    {...register('goalValueAceptable', {
-                                                        required: {
-                                                            value: true, 
-                                                            message: "El valor de la meta debe ser numérico."
-                                                        }
-                                                    })}
-                                                />
-                                                {/* {unidadMedidaSymbol && (
-                                                    <span className='ml-2'>{unidadMedidaSymbol}</span>
-                                                )} */}
-                                            </div>
+                                                min={0}
+                                            />
+                                            {unidadMedidaSymbol && (
+                                                <span>{unidadMedidaSymbol}</span>
+                                            )}
                                         </div>
-                                        {(errors.goalConditionalAceptable && errors.goalConditionalAceptable.message) && (
-                                            <p className="input-message-error">{errors.goalConditionalAceptable.message}</p>
-                                        )}
-                                        {(errors.goalValueAceptable && errors.goalValueAceptable.message) && (
-                                            <p className="input-message-error">{errors.goalValueAceptable.message}</p>
+                                        {(errors.bueno && errors.bueno.message) && (
+                                            <p className="input-message-error">{errors.bueno.message}</p>
                                         )}
                                     </div>
                                     
                                     {/* Crítico */}
                                     <div>
-                                        <div className='grid grid-cols-[80px_60px_100px] gap-2 items-center mt-2'>
-                                            <label className='label-form' htmlFor='goalValueCritico'>Crítico: </label> 
-                                            <select
-                                                className={`${errors.goalConditionalCritico ? 'input-form-error': ''} input-form w-[60px]`}
-                                                {...register('goalConditionalCritico', {
+                                        <div className='grid grid-cols-[80px_90px_100px] gap-2 items-center mt-2'>
+                                            <label className='label-form' htmlFor='critico'>Crítico: </label> 
+                                            <input 
+                                                type="number" 
+                                                className={`${errors.critico ? 'input-form-error' : ''} input-form w-[90px]`}
+                                                id="critico"
+                                                {...register('critico', {
                                                     required: {
                                                         value: true, 
-                                                        message: "Debe seleccionar un condicional."
+                                                        message: "El valor de la meta debe ser numérico."
                                                     }
                                                 })}
-                                            >
-                                                <option value="mayor_que">&gt;</option>
-                                                <option value="mayor_igual_que">&ge;</option>
-                                                <option value="menor_que">&lt;</option>
-                                                <option value="menor_igual_que">&le;</option>
-                                            </select>
-                                            <div>
-                                                <input 
-                                                    type="number" 
-                                                    className={`${errors.goalValueCritico ? 'input-form-error' : ''} input-form w-[60px]`}
-                                                    id="goalValueCritico"
-                                                    {...register('goalValueCritico', {
-                                                        required: {
-                                                            value: true, 
-                                                            message: "El valor de la meta debe ser numérico."
-                                                        }
-                                                    })}
-                                                />
-                                                {/* {unidadMedidaSymbol && (
-                                                    <span className='ml-2'>{unidadMedidaSymbol}</span>
-                                                )} */}
-                                            </div>
+                                                min={0}
+                                            />
+                                            {unidadMedidaSymbol && (
+                                                <span>{unidadMedidaSymbol}</span>
+                                            )}
                                         </div>
-                                        {(errors.goalConditionalCritico && errors.goalConditionalCritico.message) && (
-                                            <p className="input-message-error">{errors.goalConditionalCritico.message}</p>
-                                        )}
-                                        {(errors.goalValueCritico && errors.goalValueCritico.message) && (
-                                            <p className="input-message-error">{errors.goalValueCritico.message}</p>
+                                        {(errors.critico && errors.critico.message) && (
+                                            <p className="input-message-error">{errors.critico.message}</p>
                                         )}
                                     </div>
                                 </div>
@@ -385,11 +416,54 @@ const CrearIndicadorPage = () => {
                         </div>
                     </div>
                 </form>
-                <h3 className='font-semibold mt-6'>Expresión matemática</h3>
                 <div className='mt-4'>
-                    <Variables setVariables = {setVariables} variables = {variables} />
-                    <h4 className='font-semibold my-4'>Fórmula</h4>
-                    {/* <FormulaEditor /> */}
+                    {/* Fórmula */}
+                    <div>
+                        <FormulaEditor 
+                            variables={variables}
+                            setValueFormula={setFormulaLaTex}
+                            valueFormula = {formulaLaTex}
+                            setError = {setError}
+                            clearErrors = {clearErrors}
+                            errors =  {errors}
+                        />
+                    </div>
+                    
+                    {/* Variables */}
+                    <div>
+                        <Variables 
+                            setVariables = {setVariables} 
+                            variables = {variables} 
+                            setError = {setError}
+                            clearErrors = {clearErrors}
+                            errors =  {errors}
+                        />
+                        {(errors.variables && errors.variables.message) && (
+                            <p className="input-message-error">{errors.variables.message}</p>
+                        )}
+                    </div>
+                </div>
+                {messageError && 
+                    <MessageError>{messageError}</MessageError>
+                }
+
+                <div className="flex items-center gap-2 mt-4">
+                    <Button
+                        type={`button`}
+                        textButton={`Guardar cambios`}
+                        colorButton={`primary`}
+                        loading={loading}
+                        onClick={() => enviarFormulario()}
+                    ></Button>
+                    <Button
+                        type={`button`}
+                        textButton={`Cancelar`}
+                        colorButton={`danger`}
+                        onClick={() => {
+                            navigate("/indicadores");
+                        }}
+                    >
+                    </Button>
                 </div>
             </Card>
         </div>

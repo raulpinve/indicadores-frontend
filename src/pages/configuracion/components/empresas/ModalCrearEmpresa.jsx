@@ -9,9 +9,9 @@ import { crearEmpresa } from '../../services/empresaServices'
 
 const ModalCrearEmpresa = (props) => {
     const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
-    const [messageError, setMessageError] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const {cerrarModal, setEmpresas} = props
+    const [messageError, setMessageError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const {cerrarModal, setEmpresas} = props;
 
     // Crea el estandar
     const onSubmit = async(values) => {
