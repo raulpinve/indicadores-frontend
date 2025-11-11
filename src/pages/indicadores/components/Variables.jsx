@@ -9,6 +9,7 @@ import { LuPencil, LuTrash2 } from 'react-icons/lu';
 import ModalAgregarVariable from './variables/ModalAgregarVariable';
 import ModalEditarVariable from './variables/ModalEditarVariable';
 import ModalEliminarVariable from './variables/ModalEliminarVariable';
+import Button from '../../../shared/components/Button';
 
 const Variables = (props) => {
     const { variables, setVariables, errors, setError, clearErrors } = props;
@@ -33,13 +34,13 @@ const Variables = (props) => {
             <div className="mt-6">
                 <div className="flex items-center gap-2 mt-2">
                     <h4 className='font-semibold'>Variables</h4>
-                    <button
-                        type='button'
+                    <Button
                         onClick={() => setModalActivo("crear-variable")}
-                        className='button-form-primary font-normal text-sm py-1 px-2'
+                        type='button'
+                        colorButton = "primary"
                     >
                         Agregar
-                    </button>
+                    </Button>
                 </div>
             </div>
             <Table>

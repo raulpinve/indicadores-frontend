@@ -8,6 +8,11 @@ export const obtenerUltimasVersiones = async (pagina, consulta, empresaId, proce
 };
 
 export const crearIndicador = async (values) =>{
-    const response = await api.post("/indicadores", values);
+    const response = await api.post(`/indicadores`, values);
+    return response.data;
+}
+
+export const obtenerVersionIndicador = async (versionId) => {
+    const response = await api.get(`/versiones/${versionId}`)
     return response.data;
 }

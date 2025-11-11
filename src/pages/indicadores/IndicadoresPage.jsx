@@ -16,6 +16,7 @@ import SkeletonTable from '../../shared/components/SkeletonTable';
 import { LuChevronDown } from 'react-icons/lu';
 import { obtenerTodosProcesos } from './services/procesosServices';
 import { toast } from 'sonner';
+import Button from '../../shared/components/Button';
 
 const IndicadoresPage = () => {
     const [procesoSeleccionado, setProcesoSeleccionado] = useState("");
@@ -73,7 +74,14 @@ const IndicadoresPage = () => {
             <Card>
                 <CardTitulo>
                     Indicadores 
-                    <Link to="/indicadores/crear" className='ml-3 p-2 text-sm rounded-lg bg-blue-600 text-white dark:bg-blue-200 dark:text-slate-800'>Crear</Link>
+                    <Button
+                        onClick={() => {
+                            navigate("/indicadores/crear")
+                        }}
+                        className="ml-2"
+                        colorButton="primary"
+                        textButton={`Crear`}
+                    />
                 </CardTitulo>
                 
                 {/* Filtros para buscar indicador */}

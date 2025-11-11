@@ -84,7 +84,16 @@
       border border-gray-300 dark:border-gray-700 
       cursor-not-allowed rounded-md px-4 font-medium focus:border-none focus:ring-0;
   }
+
+
 }
+
+.recharts-wrapper:focus,
+.recharts-surface:focus,
+.recharts-layer:focus {
+  outline: none;
+}
+
 /* Estilo base */
 math-field {
     width: 100%;

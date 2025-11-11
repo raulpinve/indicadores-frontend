@@ -1,74 +1,139 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../../shared/components/Card';
 import { LuPencil, LuRotateCcw, LuTrash2 } from 'react-icons/lu';
 import Button from '../../../shared/components/Button';
+import { useNavigate } from 'react-router-dom';
+import SkeletonElement from '../../../shared/components/SkeletonElement';
 
-const FichaTecnica = () => {
+const FichaTecnica = (props) => {
+    const {loading, versionSeleccionada, versionId} = props;
+    const navigate = useNavigate();
+
     return (
         <Card>
             <h2 className='font-semibold text-lg'>Ficha técnica</h2>
-            <div className='grid gap-5 mt-4 text-sm'>
-                {/* Propósito */}
-                <div>
-                    <h3 className='font-semibold'>Propósito</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
-                </div>
 
-                {/* Descripción */}
+            {/* Loading */}
+            {loading && !versionSeleccionada && (
                 <div>
-                    <h3 className='font-semibold'>Descripción</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
-                </div>
+                    {/* Propósito */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-8" />
+                    </div>
 
-                {/* Frecuencia de medición */}
-                <div>
-                    <h3 className='font-semibold'>Frecuencia de medición</h3>
-                    <p>Mensual</p>
-                </div>
+                    {/* Descripción */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-8" />
+                    </div>
 
-                {/* Unidad de medida */}
-                <div>
-                    <h3 className='font-semibold'>Unidad de medida</h3>
-                    <p>Porcentaje</p>
-                </div>
+                    {/* Frecuencia de medición */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-4" />
+                    </div>
 
-                {/* Tipo de meta */}
-                <div>
-                    <h3 className='font-semibold'>Tipo de meta</h3>
-                    <p>Absoluta</p>
-                </div>
+                    {/* Unidad de medida */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-4" />
+                    </div>
 
-                {/* Motivo de la versión */}
-                <div>
-                    <h3 className='font-semibold'>Mótivo de la versión</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt </p>
-                </div>
+                    {/* Tipo de meta */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-4" />
+                    </div>
 
-                {/* Fórmula */}
-                <div>
-                    <h3 className='font-semibold'>Fórmula</h3>
-                    <p> x + 2 </p>
+                    {/* Mótivo de la versión */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-8" />
+                    </div>
+
+                    {/* Fórmula */}
+                    <div className='grid gap-2 mt-4 text-sm'>
+                        <SkeletonElement className="w-[120px] h-4" />
+                        <SkeletonElement className="w-full h-8" />
+                    </div>
+
+                    {/* Botones */}
+                    <div className="flex items-center justify-content gap-2 mt-4">
+                        <SkeletonElement className="w-[120px] h-6" />
+                        <SkeletonElement className="w-[120px] h-6" />
+                        <SkeletonElement className="w-[120px] h-6" />
+                    </div>
                 </div>
-                
-                <div className="flex items-center justify-content gap-2">
-                    <Button
-                        colorButton={`secondary`}
-                        title={`Editar versión`}
-                    >
-                        <LuPencil /> Editar
-                    </Button>
-                    <Button
-                        colorButton={`secondary`}
-                        title={`Actualizar versión`}
-                    >
-                        <LuRotateCcw /> Actualizar
-                    </Button>
-                    <Button
-                        colorButton={`danger`}
-                        title={`Eliminar versión`}
-                    ><LuTrash2 /> Eliminar</Button>
+            )}
+            
+            {!loading && versionSeleccionada && (
+                <div className='grid gap-5 mt-4 text-sm'>
+                    {/* Propósito */}
+                    <div>
+                        <h3 className='font-semibold'>Propósito</h3>
+                        <p>{versionSeleccionada.proposito}</p>
+                    </div>
+
+                    {/* Descripción */}
+                    <div>
+                        <h3 className='font-semibold'>Descripción</h3>
+                        <p>{versionSeleccionada.descripcion}</p>
+                    </div>
+
+                    {/* Frecuencia de medición */}
+                    <div>
+                        <h3 className='font-semibold'>Frecuencia de medición</h3>
+                        <p className='capitalize'>{versionSeleccionada.frecuenciaMedicion}</p>
+                    </div>
+
+                    {/* Unidad de medida */}
+                    <div>
+                        <h3 className='font-semibold'>Unidad de medida</h3>
+                        <p className='capitalize'>{versionSeleccionada.unidadMedida}</p>
+                    </div>
+
+                    {/* Tipo de meta */}
+                    <div>
+                        <h3 className='font-semibold'>Tipo de meta</h3>
+                        <p className='capitalize'>{versionSeleccionada.tipoMeta}</p>
+                    </div>
+
+                    {/* Motivo de la versión */}
+                    <div>
+                        <h3 className='font-semibold'>Mótivo de la versión</h3>
+                        <p>{versionSeleccionada.motivoVersion}</p>
+                    </div>
+
+                    {/* Fórmula */}
+                    <div>
+                        <h3 className='font-semibold'>Fórmula</h3>
+                        <p>{versionSeleccionada.formulaLatex}</p>
+                    </div>
+                    
+                    <div className="flex items-center justify-content gap-2">
+                        <Button
+                            colorButton={`secondary`}
+                            title={`Editar versión`}
+                            onClick = {() => {
+                                navigate(`/indicadores/${versionId}/editar`)
+                            }}
+                        >
+                            <LuPencil /> Editar
+                        </Button>
+                        <Button
+                            colorButton={`secondary`}
+                            title={`Actualizar versión`}
+                        >
+                            <LuRotateCcw /> Actualizar
+                        </Button>
+                        <Button
+                            colorButton={`danger`}
+                            title={`Eliminar versión`}
+                        ><LuTrash2 /> Eliminar</Button>
+                    </div>
                 </div>
-            </div>
+            )}
         </Card>
     );
 };

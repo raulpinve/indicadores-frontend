@@ -43,7 +43,7 @@ const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError
 
   return (
     <div className="w-full">
-      <h4 className='font-semibold mt-6'>Fórmula</h4>
+      <h4 className='font-semibold'>Fórmula</h4>
       <math-field
         style={styleCorrecto}
         onInput={(evt) => {
