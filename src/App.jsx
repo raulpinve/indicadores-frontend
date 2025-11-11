@@ -15,6 +15,7 @@ import { Toaster } from 'sonner'
 import axios from 'axios'
 import IndicadoresPage from './pages/indicadores/IndicadoresPage'
 import CrearIndicadorPage from './pages/indicadores/crearIndicadorPage'
+import IndicadorPage from './pages/indicadores/IndicadorPage'
 
 function App() {
     const dispatch = useDispatch();
@@ -75,6 +76,7 @@ function App() {
           <Route path="/" element={<Navigate to="/configuracion" replace />} />
           <Route path="/configuracion" element={<ConfiguracionPage />} />
           <Route path="/indicadores" element={<IndicadoresPage />} />
+          <Route path="/indicadores/:indicadorId" element={<IndicadorPage />} />
           <Route path="/indicadores/crear" element={<CrearIndicadorPage />} />
           <Route path="/editar-perfil" element={<EditarPerfilPage />} />
           <Route path="/configuracion/empresas/:empresaId" element={<ConfiguracionEmpresaPage />} />

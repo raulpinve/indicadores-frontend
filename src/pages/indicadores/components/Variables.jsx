@@ -7,11 +7,11 @@ import TableTd from '../../../shared/components/TableTd';
 import TableTbody from '../../../shared/components/TableTbody';
 import { LuPencil, LuTrash2 } from 'react-icons/lu';
 import ModalAgregarVariable from './variables/ModalAgregarVariable';
-import Button from '../../../shared/components/Button';
 import ModalEditarVariable from './variables/ModalEditarVariable';
 import ModalEliminarVariable from './variables/ModalEliminarVariable';
 
-const Variables = ({ variables, setVariables }) => {
+const Variables = (props) => {
+    const { variables, setVariables, errors, setError, clearErrors } = props;
     const [modalActivo, setModalActivo] = useState("");
     const [variableSeleccionada, setVariableSeleccionada] = useState();
 
@@ -23,6 +23,10 @@ const Variables = ({ variables, setVariables }) => {
             descripcion: "Descripción de la variable"
         }])
     }, [])
+
+    useEffect(() => {
+        clearErrors("variables");
+    }, [variables])
 
     return (    
         <>
@@ -84,6 +88,10 @@ const Variables = ({ variables, setVariables }) => {
                     )}
                 </TableTbody>
             </Table>
+
+            {(errors.variables && errors.variables.message) && (
+                <p className="input-message-error">{errors.variables.message}</p>
+            )}
 
             {modalActivo === "crear-variable" && (
                 <ModalAgregarVariable 

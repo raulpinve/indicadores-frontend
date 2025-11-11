@@ -65,12 +65,12 @@ const CrearIndicadorPage = () => {
         setLoading(true);
 
         try {
-            await crearIndicador({
+            const result = await crearIndicador({
                 ...data, 
                 variables, 
                 formulaLaTex: formulaLaTex
             });
-            navigate("/indicadores");
+            navigate(`/indicadores/${result?.data?.id}`);
         } catch (err) {
             handleErrors(err, setError, setMessageError);
         } finally{
@@ -303,8 +303,8 @@ const CrearIndicadorPage = () => {
                                     className={`${errors.direccion ? 'input-form-error': ''} input-form`}
                                 >
                                     <option value="">Seleccionar...</option>
-                                    <option value="asc">Más alto es mejor (ej: % de cumplimiento)</option>
-                                    <option value="desc">Más bajo es mejor (ej: días de entrega, defectos)</option>
+                                    <option value="asc">Más alto es mejor (ej: 95% de cumplimiento)</option>
+                                    <option value="desc">Más bajo es mejor (ej: 5 días de entrega, defectos)</option>
                                 </select>
                                 {errors.direccion && <p className="error-message">{errors.direccion.message}</p>}
                             </div>
@@ -362,15 +362,15 @@ const CrearIndicadorPage = () => {
                                         )}
                                     </div>
                                     
-                                    {/* bueno */}
+                                    {/* Aceptable */}
                                     <div>
                                         <div className='grid grid-cols-[80px_90px_100px] gap-2 items-center mt-2'>
-                                            <label className='label-form' htmlFor='aceptable'>Bueno: </label> 
+                                            <label className='label-form' htmlFor='aceptable'>Aceptable: </label> 
                                             <input 
                                                 type="number" 
-                                                className={`${errors.bueno ? 'input-form-error' : ''} input-form w-[90px]`}
-                                                id="bueno"
-                                                {...register('bueno', {
+                                                className={`${errors.aceptable ? 'input-form-error' : ''} input-form w-[90px]`}
+                                                id="aceptable"
+                                                {...register('aceptable', {
                                                     required: {
                                                         value: true, 
                                                         message: "El valor de la meta debe ser numérico."
@@ -382,8 +382,8 @@ const CrearIndicadorPage = () => {
                                                 <span>{unidadMedidaSymbol}</span>
                                             )}
                                         </div>
-                                        {(errors.bueno && errors.bueno.message) && (
-                                            <p className="input-message-error">{errors.bueno.message}</p>
+                                        {(errors.aceptable && errors.aceptable.message) && (
+                                            <p className="input-message-error">{errors.aceptable.message}</p>
                                         )}
                                     </div>
                                     
@@ -438,9 +438,7 @@ const CrearIndicadorPage = () => {
                             clearErrors = {clearErrors}
                             errors =  {errors}
                         />
-                        {(errors.variables && errors.variables.message) && (
-                            <p className="input-message-error">{errors.variables.message}</p>
-                        )}
+                        
                     </div>
                 </div>
                 {messageError && 

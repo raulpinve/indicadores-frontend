@@ -167,7 +167,7 @@ const IndicadoresPage = () => {
                                     return (
                                         <tr 
                                             key={indicador.id} 
-                                            className="cursor-pointer text-sm hover:bg-gray-50 transition-colors"
+                                            className="cursor-pointer text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                             onClick={() => redireccionarVersionIndicador(indicador.id)}
                                         >
                                             {/* Nombre del indicador */}
