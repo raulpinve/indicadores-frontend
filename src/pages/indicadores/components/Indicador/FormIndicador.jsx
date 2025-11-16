@@ -65,10 +65,10 @@ const FormIndicador = (props) => {
                 setMessageError, 
                 versionSeleccionada?.id,
             )
-            if(versionSeleccionada){
-                navigate(`/indicadores/${versionSeleccionada?.id}`);
-            }else{
+            if(tipoFormulario === "crear"){
                 navigate(`/indicadores/${indicadorModificado?.versiones[0]?.id}`);
+            }else if(tipoFormulario === "editar" || tipoFormulario === "actualizar"){
+                navigate(`/indicadores/${indicadorModificado?.id}`);
             }   
 
             if(tipoFormulario === "crear"){
@@ -85,7 +85,7 @@ const FormIndicador = (props) => {
 
     useEffect(() =>{
         if(tipoFormulario === "crear"){
-            setValue("nombre", "Nombre del indicador");
+            setValue("nombre", "Indicador");
             setValue("proposito", "El propósito  del indicador");
             setValue("descripcion", "La descripción del indicador");
             setValue("frecuenciaMedicion", "mensual");
@@ -98,7 +98,6 @@ const FormIndicador = (props) => {
             setValue("descripcion", versionSeleccionada.descripcion);
             setValue("frecuenciaMedicion", versionSeleccionada.frecuenciaMedicion);
             setValue("unidadMedida", versionSeleccionada.unidadMedida);
-            setValue("version", versionSeleccionada.version);
             setFormulaLaTex(versionSeleccionada.formulaLatex)
             
             if(versionSeleccionada?.metas[0]){
@@ -303,55 +302,56 @@ const FormIndicador = (props) => {
 
                         {!loadingIndicador && (<>
 
-                            {/* Nueva versión del indicador */}
-                            <div>
-                                <label htmlFor="version" className='label-form'>Nueva versión del indicador<span className='text-red-600'>*</span></label>
-                                <input
-                                    type="number"
-                                    className={`input-form ${errors.version ? 'input-form-error' : ''}`}
-                                    id="version"
-                                        {...register("version", {
-                                            required: "Debe ingresar una versión",
-                                            valueAsNumber: true,   // convierte el valor a número automáticamente
-                                            min: {
-                                                value: 1,
-                                                message: "La versión debe ser mayor que 0"
+                            {tipoFormulario === "actualizar" && <>
+                                {/* Nueva versión del indicador */}
+                                <div>
+                                    <label htmlFor="version" className='label-form'>Nueva versión del indicador<span className='text-red-600'>*</span></label>
+                                    <input
+                                        type="number"
+                                        className={`input-form ${errors.version ? 'input-form-error' : ''}`}
+                                        id="version"
+                                            {...register("version", {
+                                                required: "Debe ingresar una versión",
+                                                min: {
+                                                    value: 1,
+                                                    message: "La versión debe ser mayor que 0"
+                                                },
+                                            })}
+                                    />
+
+                                    {(errors.version && errors.version.message) && (
+                                        <p className="input-message-error">{errors.version.message}</p>
+                                    )}
+                                </div>  
+
+                                {/* Motivo de la nueva versión */}
+                                <div>
+                                    <label htmlFor="motivoVersion" className='label-form'>
+                                        Motivo de la nueva versión <span className='text-red-600'>*</span>
+                                    </label>
+
+                                    <textarea
+                                        id="motivoVersion"
+                                        className={`input-form ${errors.motivoVersion ? 'input-form-error' : ''} h-20`}
+                                        {...register("motivoVersion", {
+                                            required: {
+                                                value: true,
+                                                message: "Debe ingresar el motivo de la nueva versión"
                                             },
+                                            maxLength: {
+                                                value: 250,
+                                                message: "El motivo no debe superar los 250 caracteres"
+                                            },
+                                            validate: value =>
+                                                typeof value === "string" || "El motivo debe ser texto"
                                         })}
-                                />
+                                    />
 
-                                {(errors.unidadMedida && errors.unidadMedida.message) && (
-                                    <p className="input-message-error">{errors.unidadMedida.message}</p>
-                                )}
-                            </div>  
-
-                            {/* Motivo de la nueva versión */}
-                            <div>
-                                <label htmlFor="motivoVersion" className='label-form'>
-                                    Motivo de la nueva versión <span className='text-red-600'>*</span>
-                                </label>
-
-                                <textarea
-                                    id="motivoVersion"
-                                    className={`input-form ${errors.motivoVersion ? 'input-form-error' : ''} h-20`}
-                                    {...register("motivoVersion", {
-                                        required: {
-                                            value: true,
-                                            message: "Debe ingresar el motivo de la nueva versión"
-                                        },
-                                        maxLength: {
-                                            value: 250,
-                                            message: "El motivo no debe superar los 250 caracteres"
-                                        },
-                                        validate: value =>
-                                            typeof value === "string" || "El motivo debe ser texto"
-                                    })}
-                                />
-
-                                {errors.motivoVersion && (
-                                    <p className="input-message-error">{errors.motivoVersion.message}</p>
-                                )}
-                            </div>
+                                    {errors.motivoVersion && (
+                                        <p className="input-message-error">{errors.motivoVersion.message}</p>
+                                    )}
+                                </div>
+                            </>}
 
                             {/* Unidad medida */}
                             <div>

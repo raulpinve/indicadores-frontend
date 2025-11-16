@@ -21,15 +21,14 @@ import Button from '../../shared/components/Button';
 const IndicadoresPage = () => {
     const [procesoSeleccionado, setProcesoSeleccionado] = useState("");
     const empresaId = useSelector(state => state?.empresa?.empresa?.id);
-    const [modalActivo, setModalActivo] = useState("");
-    const [procesos, setProcesos] = useState([]);
-    const [consulta, setConsulta] = useState("");
-    const [loading, setLoading] = useState(null);
     const [indicadores, setIndicadores] = useState([]);
-    const [error, setError] = useState(null);
-    const debouncedConsulta = useDebounce(consulta, 500);
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
+    const [procesos, setProcesos] = useState([]);
+    const [consulta, setConsulta] = useState("");
+    const debouncedConsulta = useDebounce(consulta, 500);
+    const [loading, setLoading] = useState(null);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     // Obtener indicadores
@@ -115,8 +114,9 @@ const IndicadoresPage = () => {
                     <TableThead>
                         <tr className="text-left">
                             <TableTh>Nombre del indicador</TableTh>
-                            <TableTh>Estado actual</TableTh>
-                            <TableTh>VRUP</TableTh>
+                            <TableTh className='text-center'>Version</TableTh>
+                            <TableTh className='text-center'>Estado actual</TableTh>
+                            <TableTh className='text-center'>VRUP</TableTh>
                             <TableTh>Proceso</TableTh>
                         </tr>
                     </TableThead>
@@ -182,36 +182,43 @@ const IndicadoresPage = () => {
                                             <TableTd className="flex items-center gap-3">
                                                 <p>{indicador?.nombre}</p>
                                             </TableTd>
+                                            <TableTd className="text-center">
+                                                <p>{indicador?.version}</p>
+                                            </TableTd>
 
                                             {/* Último resultado y estado */}
                                             <TableTd>
-                                                {valor && estado ? (
-                                                    <div className="flex items-center gap-2 font-semibold">
-                                                        <span>{valor}</span>
-                                                        {estado === "optimo" && (
-                                                            <div className="bg-green-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Óptimo</div>
-                                                        )}
-                                                        {estado === "critico" && (
-                                                            <div className="bg-red-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Crítico</div>
-                                                        )}
-                                                        {estado === "aceptable" && (
-                                                            <div className="bg-yellow-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Aceptable</div>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <p>—</p>
-                                                )}
+                                                <div className='flex justify-center'>
+                                                    {valor && estado ? (
+                                                        <div className="flex items-center gap-2 font-semibold">
+                                                            <span>{valor}</span>
+                                                            {estado === "optimo" && (
+                                                                <div className="bg-green-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Óptimo</div>
+                                                            )}
+                                                            {estado === "critico" && (
+                                                                <div className="bg-red-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Crítico</div>
+                                                            )}
+                                                            {estado === "aceptable" && (
+                                                                <div className="bg-yellow-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Aceptable</div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <p>—</p>
+                                                    )}
+                                                </div>
                                             </TableTd>
 
                                             {/* VRUP con flecha y color */}
                                             <TableTd>
-                                                {vrup !== null && !isNaN(vrup) ? (
-                                                    <p className={`flex items-center gap-1 font-semibold ${vrupColor}`}>
-                                                        {vrupIcon} {Math.abs(Math.round(vrup))} %
-                                                    </p>
-                                                ) : (
-                                                    <p>—</p>
-                                                )}
+                                                <div className="flex justify-center">
+                                                    {vrup !== null && !isNaN(vrup) ? (
+                                                        <p className={`flex items-center gap-1 font-semibold ${vrupColor}`}>
+                                                            {vrupIcon} {Math.abs(Math.round(vrup))} %
+                                                        </p>
+                                                    ) : (
+                                                        <p>—</p>
+                                                    )}
+                                                </div>
                                             </TableTd>
 
                                             {/* Nombre del proceso */}
