@@ -16,6 +16,11 @@ export const editarIndicador = async(versionId, values) => {
     return response.data;
 }
 
+export const actualizarVersion = async(versionId, values) => {
+    const response = await api.put(`/versiones/${versionId}/actualizar`, values);
+    return response.data;
+}
+
 export const obtenerVersionIndicador = async (versionId) => {
     const response = await api.get(`/versiones/${versionId}`)
     return response.data;

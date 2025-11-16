@@ -124,6 +124,9 @@ const FichaTecnica = (props) => {
                         <Button
                             colorButton={`secondary`}
                             title={`Actualizar versión`}
+                            onClick = {() => {
+                                navigate(`/indicadores/${versionSeleccionada?.id}/actualizar`)
+                            }}
                         >
                             <LuRotateCcw /> Actualizar
                         </Button>

@@ -31,8 +31,6 @@ const IndicadorPage = () => {
         fecthInformacionVersion();
     }, [])
 
-    console.log(versionSeleccionada)
-
     return (
         <div>
             <h1 className='font-semibold text-2xl flex items-center gap-2 my-4'> 
@@ -62,7 +60,6 @@ const IndicadorPage = () => {
                         }[versionSeleccionada?.estado] || versionSeleccionada?.estado}
                     </span>
                 </>)}
-                {/* <span className="inline-flex items-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10">Vigente</span>    */}
             </h1>
 
             {/* Gráfica y registros */}
