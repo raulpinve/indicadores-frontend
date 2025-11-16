@@ -20,24 +20,15 @@ const ModalEditarVariable = (props) => {
     }, [variableSeleccionada])
 
     const onSubmit = (values) => {
-        // Paso 1: comprobar duplicados excluyendo la misma variable
-        const existeNombre = variables.some(
-            v => v.nombre.toLowerCase() === values.nombre.toLowerCase() && v.id !== variableSeleccionada.id
-        );
-
+        // Paso 1: comprobar duplicados antes del set
         const existeAlias = variables.some(
             v => v.alias.toLowerCase() === values.alias.toLowerCase() && v.id !== variableSeleccionada.id
         );
 
-        if (existeNombre) {
-            setError("nombre", { type: "manual", message: "Ya existe una variable con ese nombre" });
-        }
-
         if (existeAlias) {
             setError("alias", { type: "manual", message: "Ya existe una variable con ese alias" });
+            return
         }
-
-        if (existeNombre || existeAlias) return;
 
         // Paso 2: actualizar variable existente
         setVariables(prev =>
@@ -58,30 +49,6 @@ const ModalEditarVariable = (props) => {
             size="md"
         >
             <form action="" onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
-                {/* Nombre de la variable */}
-                <div>
-                    <label className='label-form'>Nombre de la variable <span className='input-required'>*</span></label>
-                    <input 
-                        type="text" 
-                        placeholder='Nombre de la variable' 
-                        className={`input-form ${errors.nombre && errors.nombre.message ? 'input-form-error' : ''} `}
-                        {...register("nombre",{
-                            required: "El nombre es obligatorio",
-                            minLength: {
-                                value: 3,
-                                message: "Debe tener al menos 3 caracteres",
-                            },
-                            maxLength: {
-                                value: 100,
-                                message: "No puede tener más de 100 caracteres"
-                            }
-                        })}
-                    />
-                    {(errors.nombre && errors.nombre.message ) && (
-                        <p className="input-message-error">{errors.nombre.message}</p>
-                    )}
-                </div>
-
                 {/* Alias */}
                 <div>
                     <label className='label-form'>Alias de la variable<span className='input-required'>*</span></label>

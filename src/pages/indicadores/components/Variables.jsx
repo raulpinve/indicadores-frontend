@@ -12,22 +12,13 @@ import ModalEliminarVariable from './variables/ModalEliminarVariable';
 import Button from '../../../shared/components/Button';
 
 const Variables = (props) => {
-    const { variables, setVariables, errors, setError, clearErrors } = props;
+    const { variables = [], setVariables, errors, setError, clearErrors } = props;
     const [modalActivo, setModalActivo] = useState("");
     const [variableSeleccionada, setVariableSeleccionada] = useState();
 
     useEffect(() => {
-        setVariables([{
-            id: "fgfgfgf", 
-            nombre: "Nombre variable",
-            alias: "variable",
-            descripcion: "Descripción de la variable"
-        }])
-    }, [])
-
-    useEffect(() => {
         clearErrors("variables");
-    }, [variables])
+    }, [JSON.stringify(variables)])
 
     return (    
         <>
@@ -46,7 +37,6 @@ const Variables = (props) => {
             <Table>
                 <TableThead>
                     <TableTr>
-                        <TableTh>Nombre de la variable</TableTh>
                         <TableTh>Alias</TableTh>
                         <TableTh>Descripción</TableTh>
                         <TableTh>Acciones</TableTh>
@@ -58,9 +48,9 @@ const Variables = (props) => {
                             <TableTd colSpan={4} >No hay variables registradas</TableTd>
                         </TableTr>
                     )}
+
                     {variables.length > 0 && variables.map( variable => 
                         <TableTr key={variable.id}>
-                            <TableTd>{variable.nombre}</TableTd>
                             <TableTd>{variable.alias}</TableTd>
                             <TableTd>{variable.descripcion}</TableTd>
                             <TableTd>

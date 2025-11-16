@@ -31,12 +31,16 @@ const IndicadorPage = () => {
         fecthInformacionVersion();
     }, [])
 
+    console.log(versionSeleccionada)
+
     return (
         <div>
             <h1 className='font-semibold text-2xl flex items-center gap-2 my-4'> 
-                {loadingPage && !versionSeleccionada && (
+                {loadingPage && !versionSeleccionada && (<>
                     <SkeletonElement className="w-[220px] h-6"/>
-                )}
+                    <SkeletonElement className="w-8 h-6"/>
+                    <SkeletonElement className="w-12 h-6"/>
+                </>)}
                 {!loadingPage && versionSeleccionada && (<>
                     {/* Color versión estado  */}
                     <span>{versionSeleccionada?.nombre}</span>
@@ -45,15 +49,15 @@ const IndicadorPage = () => {
                     <span
                         className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring capitalize
                             ${{
-                                Vigente: "bg-green-50 text-green-700 inset-ring-green-600/10",
-                                Obsoleto: "bg-red-50 text-red-700 inset-ring-red-600/10",
+                                vigente: "bg-green-100 dark:bg-green-700 dark:text-white text-green-700 inset-ring-green-600/10",
+                                obsoleto: "bg-red-100 dark:bg-red-700 dark:text-white text-red-700 inset-ring-red-600/10",
                                 enRevision: "bg-yellow-50 text-yellow-700 inset-ring-yellow-600/10",
                             }[versionSeleccionada?.estado] || "bg-gray-50 text-gray-700 inset-ring-gray-600/10"}`
                         }
                     >
                         {{
-                            Vigente: "Vigente",
-                            Obsoleto: "Obsoleto",
+                            vigente: "Vigente",
+                            obsoleto: "Obsoleto",
                             enRevision: "En Revisión",
                         }[versionSeleccionada?.estado] || versionSeleccionada?.estado}
                     </span>

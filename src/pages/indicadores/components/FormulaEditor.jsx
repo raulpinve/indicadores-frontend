@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "https://esm.run/mathlive";
+// import "https://esm.run/mathlive";
+// import "mathlive/dist/mathlive.min.css";
+import { MathfieldElement } from "mathlive";
+MathfieldElement.fontsDirectory = '/node_modules/mathlive/fonts';
 
 const RESERVED = new Set([
   "sin","cos","tan","asin","acos","atan","log","ln","sqrt","abs","max","min","exp",
@@ -22,16 +25,24 @@ const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError
     const declaradas = variables.map(v => v.alias.trim());
     const faltantes = usadas.filter(u => !declaradas.includes(u));
 
-    clearErrors("formulaLaTex");
+    const hayFaltantes = faltantes.length > 0;
 
-    // ⚙️ si hay alguna variable "rara" o faltante => advertencia general
-    if(faltantes.length > 0){
-      setError("formulaLaTex", {
-        type: "manual", 
-        message: "⚠️ La fórmula contiene variables no declaradas o símbolos no válidos."
-      })
+    if (hayFaltantes) {
+      // seta error SOLO si no existe ya
+      if (!errors.formulaLaTex) {
+        setError("formulaLaTex", {
+          type: "manual",
+          message: "⚠️ La fórmula contiene variables no declaradas o símbolos no válidos."
+        });
+      }
+    } else {
+      // limpia error SOLO si existe
+      if (errors.formulaLaTex) {
+        clearErrors("formulaLaTex");
+      }
     }
-  }, [valueFormula, variables]);
+  }, [valueFormula, variables, errors.formulaLaTex]);
+
 
   const styleCorrecto = errors.formulaLaTex ? {
     width: "100%",

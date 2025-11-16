@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import SkeletonElement from '../../../shared/components/SkeletonElement';
 
 const FichaTecnica = (props) => {
-    const {loading, versionSeleccionada, versionId} = props;
+    const {loadingPage, versionSeleccionada} = props;
     const navigate = useNavigate();
 
     return (
@@ -14,7 +14,7 @@ const FichaTecnica = (props) => {
             <h2 className='font-semibold text-lg'>Ficha técnica</h2>
 
             {/* Loading */}
-            {loading && !versionSeleccionada && (
+            {loadingPage && !versionSeleccionada && (
                 <div>
                     {/* Propósito */}
                     <div className='grid gap-2 mt-4 text-sm'>
@@ -67,7 +67,7 @@ const FichaTecnica = (props) => {
                 </div>
             )}
             
-            {!loading && versionSeleccionada && (
+            {!loadingPage && versionSeleccionada && (
                 <div className='grid gap-5 mt-4 text-sm'>
                     {/* Propósito */}
                     <div>
@@ -116,7 +116,7 @@ const FichaTecnica = (props) => {
                             colorButton={`secondary`}
                             title={`Editar versión`}
                             onClick = {() => {
-                                navigate(`/indicadores/${versionId}/editar`)
+                                navigate(`/indicadores/${versionSeleccionada?.id}/editar`)
                             }}
                         >
                             <LuPencil /> Editar

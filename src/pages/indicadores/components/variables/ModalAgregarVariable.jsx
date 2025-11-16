@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Modal from '../../../../shared/components/Modal';
 import { useForm } from 'react-hook-form';
 import MessageError from '../../../../shared/components/MessageError';
@@ -14,25 +14,19 @@ const ModalAgregarVariable = (props) => {
 
     const onSubmit = (values) => {
         // Paso 1: comprobar duplicados antes del set
-        const existeNombre = variables.some(v => v.nombre.toLowerCase() === values.nombre.toLowerCase());
         const existeAlias = variables.some(v => v.alias.toLowerCase() === values.alias.toLowerCase());
-
-        if (existeNombre) {
-            setError("nombre", { type: "manual", message: "Ya existe una variable con ese nombre" });
-        }
 
         if (existeAlias) {
             setError("alias", { type: "manual", message: "Ya existe una variable con ese alias" });
+            return
         }
 
-        // Paso 2: si hay errores, salimos (no se cierra el modal)
-        if (existeNombre || existeAlias) return;
-
-        // Paso 3: si todo bien, actualizamos variables
+        // Paso 2: si todo bien, actualizamos variables
         setVariables(prev => [...prev, { id: uuidv4(), ...values }]);
 
-        // Paso 4: ahora sí, cerramos el modal y mostramos mensaje
+        // Paso 3: ahora sí, cerramos el modal y mostramos mensaje
         toast.success("Variable guardada exitosamente.");
+
         cerrarModal();
     };
 
@@ -44,30 +38,6 @@ const ModalAgregarVariable = (props) => {
             size="md"
         >
             <form action="" onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
-                {/* Nombre de la variable */}
-                <div>
-                    <label className='label-form'>Nombre de la variable <span className='input-required'>*</span></label>
-                    <input 
-                        type="text" 
-                        placeholder='Nombre de la variable' 
-                        className={`input-form ${errors.nombre && errors.nombre.message ? 'input-form-error' : ''} `}
-                        {...register("nombre",{
-                            required: "El nombre es obligatorio",
-                            minLength: {
-                                value: 3,
-                                message: "Debe tener al menos 3 caracteres",
-                            },
-                            maxLength: {
-                                value: 100,
-                                message: "No puede tener más de 100 caracteres"
-                            }
-                        })}
-                    />
-                    {(errors.nombre && errors.nombre.message ) && (
-                        <p className="input-message-error">{errors.nombre.message}</p>
-                    )}
-                </div>
-
                 {/* Alias */}
                 <div>
                     <label className='label-form'>Alias de la variable<span className='input-required'>*</span></label>

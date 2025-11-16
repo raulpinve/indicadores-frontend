@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 const ModalEliminarVariable = (props) => {
     const { cerrarModal, setVariables, variableSeleccionada } = props;
-    const [confirmText, setConfirmText] = useState('variable');
+    const [confirmText, setConfirmText] = useState();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
