@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { LuChevronDown } from 'react-icons/lu';
 import FormulaEditor from '../FormulaEditor';
 import Variables from '../Variables';
@@ -98,6 +98,11 @@ const FormIndicador = (props) => {
             setValue("descripcion", versionSeleccionada.descripcion);
             setValue("frecuenciaMedicion", versionSeleccionada.frecuenciaMedicion);
             setValue("unidadMedida", versionSeleccionada.unidadMedida);
+
+            if(tipoFormulario === "editar"){
+                setValue("version", versionSeleccionada.version);
+                setValue("motivoVersion", versionSeleccionada.motivoVersion);
+            }
             setFormulaLaTex(versionSeleccionada.formulaLatex)
             
             if(versionSeleccionada?.metas[0]){
@@ -302,7 +307,7 @@ const FormIndicador = (props) => {
 
                         {!loadingIndicador && (<>
 
-                            {tipoFormulario === "actualizar" && <>
+                            {tipoFormulario != "crear" && <>
                                 {/* Nueva versión del indicador */}
                                 <div>
                                     <label htmlFor="version" className='label-form'>Nueva versión del indicador<span className='text-red-600'>*</span></label>

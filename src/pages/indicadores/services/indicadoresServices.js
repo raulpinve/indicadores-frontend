@@ -25,3 +25,8 @@ export const obtenerVersionIndicador = async (versionId) => {
     const response = await api.get(`/versiones/${versionId}`)
     return response.data;
 }
+
+export const eliminarVersionIndicador = async (versionId) => {
+    const response = await api.delete(`/versiones/${versionId}`)
+    return response.data;
+}

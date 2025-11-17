@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Card from '../../../shared/components/Card';
 import { LuPencil, LuRotateCcw, LuTrash2 } from 'react-icons/lu';
 import Button from '../../../shared/components/Button';
 import { useNavigate } from 'react-router-dom';
 import SkeletonElement from '../../../shared/components/SkeletonElement';
+import ModalEliminarIndicador from './Indicador/ModalEliminarIndicador';
 
 const FichaTecnica = (props) => {
     const {loadingPage, versionSeleccionada} = props;
+    const [modalActivo, setModalActivo] = useState("");
     const navigate = useNavigate();
 
     return (
@@ -96,7 +98,7 @@ const FichaTecnica = (props) => {
                     {/* Tipo de meta */}
                     <div>
                         <h3 className='font-semibold'>Tipo de meta</h3>
-                        <p className='capitalize'>{versionSeleccionada.tipoMeta}</p>
+                        <p className='capitalize'>{versionSeleccionada?.metas[0]?.tipoMeta}</p>
                     </div>
 
                     {/* Motivo de la versión */}
@@ -133,9 +135,20 @@ const FichaTecnica = (props) => {
                         <Button
                             colorButton={`danger`}
                             title={`Eliminar versión`}
-                        ><LuTrash2 /> Eliminar</Button>
+                            onClick = {() => {
+                                setModalActivo("eliminar-indicador");
+                            }}
+                        ><LuTrash2 /> 
+                            Eliminar
+                        </Button>
                     </div>
                 </div>
+            )}
+            {modalActivo === "eliminar-indicador" && (
+                <ModalEliminarIndicador 
+                    cerrarModal = {() => setModalActivo("")}
+                    versionSeleccionada = {versionSeleccionada}
+                />
             )}
         </Card>
     );
