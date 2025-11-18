@@ -71,8 +71,7 @@ const IndicadoresPage = () => {
     return (
         <div>
             <Card>
-                <CardTitulo>
-                    Indicadores 
+                <CardTitulo> Indicadores 
                     <Button
                         onClick={() => {
                             navigate("/indicadores/crear")
@@ -123,18 +122,18 @@ const IndicadoresPage = () => {
                 
                     {/* Loading */}
                     {loading && (
-                        <SkeletonTable rows={7} columns={4}/>
+                        <SkeletonTable rows={7} columns={5}/>
                     )}
                     <TableTbody>
                         {/* Mostrar error */}
                         {!loading && error && (
                             <tr>
-                                <TableTd colSpan={6}>{error}</TableTd>
+                                <TableTd colSpan={5}>{error}</TableTd>
                             </tr>
                         )}
                         {!loading && !error && indicadores.length === 0 && (
                             <tr>
-                                <TableTd colSpan={6}>No hay indicadores por mostrar</TableTd>
+                                <TableTd colSpan={5}>No hay indicadores por mostrar</TableTd>
                             </tr>
                         )}
                         {!loading && !error && indicadores.length > 0 && (
@@ -228,9 +227,6 @@ const IndicadoresPage = () => {
                                         </tr>
                                     );
                                 })}
-
-
-
                             </>
                         )}
                     </TableTbody>

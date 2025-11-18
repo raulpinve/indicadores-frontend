@@ -1,5 +1,6 @@
 import { ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter } from 'recharts';
 import Card from '../../../shared/components/Card';
+import CardTitulo from '../../../shared/components/CardTitulo';
 
 // #region Sample data
 const data = [
@@ -50,28 +51,29 @@ const data = [
 // #endregion
 const Grafica = () => {
   return (<Card>
-        <ComposedChart
-            style={{ width: '100%',  maxHeight: '70vh', aspectRatio: 1.618 }}
-            responsive
-            data={data}
-            margin={{
-                top: 20,
-                right: 0,
-                bottom: 0,
-                left: 0,
-            }}
-        >
-            <CartesianGrid stroke="#f5f5f5" />
-            <XAxis dataKey="name" scale="band" />
-            <YAxis width="auto" />
-            <Tooltip />
-            <Legend />
-            <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-            <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-            <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-            <Scatter dataKey="cnt" fill="red" />
-        </ComposedChart>
-    </Card>);
+          <CardTitulo>Gráfica</CardTitulo>
+          <ComposedChart
+              style={{ width: '100%',  maxHeight: '70vh', aspectRatio: 1.618 }}
+              responsive
+              data={data}
+              margin={{
+                  top: 20,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+              }}
+          >
+              <CartesianGrid stroke="#f5f5f5" />
+              <XAxis dataKey="name" scale="band" />
+              <YAxis width="auto" />
+              <Tooltip />
+              <Legend />
+              <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+              <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+              <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+              <Scatter dataKey="cnt" fill="red" />
+          </ComposedChart>
+      </Card>);
 };
 
 export default Grafica;

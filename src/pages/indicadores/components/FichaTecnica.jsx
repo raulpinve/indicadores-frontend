@@ -5,71 +5,25 @@ import Button from '../../../shared/components/Button';
 import { useNavigate } from 'react-router-dom';
 import SkeletonElement from '../../../shared/components/SkeletonElement';
 import ModalEliminarIndicador from './Indicador/ModalEliminarIndicador';
+import CardTitulo from '../../../shared/components/CardTitulo';
 
 const FichaTecnica = (props) => {
-    const {loadingPage, versionSeleccionada} = props;
+    const {versionSeleccionada} = props;
     const [modalActivo, setModalActivo] = useState("");
     const navigate = useNavigate();
 
     return (
         <Card>
-            <h2 className='font-semibold text-lg'>Ficha técnica</h2>
+             <CardTitulo>
+                Ficha técnica 
+                <Button
+                    className='text-sm ml-2'
+                    colorButton={`primary`}
+                >Crear</Button>
+            </CardTitulo>
 
-            {/* Loading */}
-            {loadingPage && !versionSeleccionada && (
-                <div>
-                    {/* Propósito */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-8" />
-                    </div>
 
-                    {/* Descripción */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-8" />
-                    </div>
-
-                    {/* Frecuencia de medición */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-4" />
-                    </div>
-
-                    {/* Unidad de medida */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-4" />
-                    </div>
-
-                    {/* Tipo de meta */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-4" />
-                    </div>
-
-                    {/* Mótivo de la versión */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-8" />
-                    </div>
-
-                    {/* Fórmula */}
-                    <div className='grid gap-2 mt-4 text-sm'>
-                        <SkeletonElement className="w-[120px] h-4" />
-                        <SkeletonElement className="w-full h-8" />
-                    </div>
-
-                    {/* Botones */}
-                    <div className="flex items-center justify-content gap-2 mt-4">
-                        <SkeletonElement className="w-[120px] h-6" />
-                        <SkeletonElement className="w-[120px] h-6" />
-                        <SkeletonElement className="w-[120px] h-6" />
-                    </div>
-                </div>
-            )}
-            
-            {!loadingPage && versionSeleccionada && (
+            {versionSeleccionada && (
                 <div className='grid gap-5 mt-4 text-sm'>
                     {/* Propósito */}
                     <div>
