@@ -102,7 +102,7 @@ const IndicadorPage = () => {
             </div>
 
             {/* Ficha técnica y control de versiones */}
-            <div className="grid grid-cols-[400px_1fr] gap-4 mt-4">
+            <div className="grid grid-cols-[400px_1fr] gap-4 mt-4 hidden">
                 <FichaTecnica
                     versionSeleccionada={versionSeleccionada}
                     loadingPage={loadingPage}

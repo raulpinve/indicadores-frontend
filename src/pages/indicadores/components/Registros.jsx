@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CardTitulo from '../../../shared/components/CardTitulo';
 import Card from '../../../shared/components/Card';
 import Button from '../../../shared/components/Button';
@@ -8,16 +8,23 @@ import TableTr from '../../../shared/components/TableTr';
 import TableTh from '../../../shared/components/TableTh';
 import TableTbody from '../../../shared/components/TableTbody';
 import TableTd from '../../../shared/components/TableTd';
-import { LuFileText, LuFolder, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuFolder, LuPencil, LuTrash2 } from 'react-icons/lu';
+import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
 
 const Registros = () => {
-    return (
+    const [modalActivo, setModalActivo] = useState("crear");
+
+    // Obtener todos los registros
+    return (<>
         <Card>
             <CardTitulo>
                 Registros 
                 <Button
                     className='text-sm ml-2'
                     colorButton={`primary`}
+                    onClick = {() => {
+                        setModalActivo("crear");
+                    }}
                 >Crear</Button>
             </CardTitulo>
 
@@ -69,7 +76,12 @@ const Registros = () => {
                 </TableTbody>
             </Table>
         </Card>
-    );
+        {modalActivo === "crear" && (
+            <ModalCrearRegistro 
+                cerrarModal = {()=> setModalActivo("")}
+            />
+        )}
+    </>);
 };
 
 export default Registros;

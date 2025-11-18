@@ -50,7 +50,7 @@ const data = [
 
 // #endregion
 const Grafica = () => {
-  return (<Card>
+  return (<Card  className={`hidden`} >
           <CardTitulo>Gráfica</CardTitulo>
           <ComposedChart
               style={{ width: '100%',  maxHeight: '70vh', aspectRatio: 1.618 }}
