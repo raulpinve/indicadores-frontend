@@ -5,15 +5,6 @@ import FichaTecnica from './components/FichaTecnica';
 import ControlVersiones from './components/ControlVersiones';
 import { useParams } from 'react-router-dom';
 import { obtenerVersionIndicador } from './services/indicadoresServices';
-import SkeletonElement from '../../shared/components/SkeletonElement';
-import Card from '../../shared/components/Card';
-import CardTitulo from '../../shared/components/CardTitulo';
-import Table from '../../shared/components/Table';
-import TableTr from '../../shared/components/TableTr';
-import TableTh from '../../shared/components/TableTh';
-import TableThead from '../../shared/components/TableThead';
-import TableTd from '../../shared/components/TableTd';
-import TableTbody from '../../shared/components/TableTbody';
 import LoadingIndicador from './components/Indicador/LoadingIndicador';
 
 const IndicadorPage = () => {
@@ -98,7 +89,7 @@ const IndicadorPage = () => {
             {/* Gráfica y registros */}
             <div className="grid gap-4">
                 <Grafica />
-                <Registros />
+                <Registros versionSeleccionada={versionSeleccionada} />
             </div>
 
             {/* Ficha técnica y control de versiones */}

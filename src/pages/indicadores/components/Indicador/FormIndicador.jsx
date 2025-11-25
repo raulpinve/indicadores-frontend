@@ -568,9 +568,7 @@ const FormIndicador = (props) => {
                         </>)}
                     </div>
                 </div>
-
                 <div className="grid grid-cols-2 mt-6 gap-4">
-                    
                 </div>
             </form>
 

@@ -11,7 +11,7 @@ const RESERVED = new Set([
 ]);
 
 const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError, clearErrors, errors }) => {
-  const aliasRegex = /\b[A-Za-z_]+\b/g;
+  const aliasRegex = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 
   const obtenerVariablesUsadas = (formula) => {
     if (!formula) return [];
@@ -21,14 +21,14 @@ const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError
   };
 
   useEffect(() => {
-    const usadas = obtenerVariablesUsadas(valueFormula);
-    const declaradas = variables.map(v => v.alias.trim());
+    let usadas = obtenerVariablesUsadas(valueFormula).map(u => u.toLowerCase());
+    let declaradas = variables.map(v => v.alias.trim().toLowerCase());
+
     const faltantes = usadas.filter(u => !declaradas.includes(u));
 
     const hayFaltantes = faltantes.length > 0;
 
     if (hayFaltantes) {
-      // seta error SOLO si no existe ya
       if (!errors.formulaLaTex) {
         setError("formulaLaTex", {
           type: "manual",
@@ -36,7 +36,6 @@ const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError
         });
       }
     } else {
-      // limpia error SOLO si existe
       if (errors.formulaLaTex) {
         clearErrors("formulaLaTex");
       }

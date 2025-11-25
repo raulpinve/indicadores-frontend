@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardTitulo from '../../../shared/components/CardTitulo';
 import Card from '../../../shared/components/Card';
 import Button from '../../../shared/components/Button';
@@ -11,10 +11,10 @@ import TableTd from '../../../shared/components/TableTd';
 import { LuFolder, LuPencil, LuTrash2 } from 'react-icons/lu';
 import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
 
-const Registros = () => {
+const Registros = (props) => {
+    const { versionSeleccionada } = props;
     const [modalActivo, setModalActivo] = useState("crear");
-
-    // Obtener todos los registros
+    
     return (<>
         <Card>
             <CardTitulo>
@@ -79,6 +79,7 @@ const Registros = () => {
         {modalActivo === "crear" && (
             <ModalCrearRegistro 
                 cerrarModal = {()=> setModalActivo("")}
+                versionSeleccionada = {versionSeleccionada}
             />
         )}
     </>);
