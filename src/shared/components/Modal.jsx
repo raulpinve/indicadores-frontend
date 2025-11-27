@@ -91,8 +91,8 @@ const Modal = (props) => {
                     {allowClose && (
                         <button 
                             className='transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center 
-                                    rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 
-                                    dark:bg-gray-700  dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-gray-300 cursor-pointer'
+                                  rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 
+                                dark:bg-gray-700  dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-gray-300 cursor-pointer'
                             onClick={handleCloseAttempt}
                         >
                             <LuX />

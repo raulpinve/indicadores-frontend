@@ -7,25 +7,27 @@ import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { LuInfo } from 'react-icons/lu'
 import {useFormulaEvaluator} from '../../hooks/useFormulaEvaluator'
+import { calcularResultadoPeriodo, etiquetasResultado, getResultadoColor } from '../../utils/utils'
+import Table from '../../../../shared/components/Table'
+import TableTbody from '../../../../shared/components/TableTbody'
+import TableTr from '../../../../shared/components/TableTr'
+import TableTd from '../../../../shared/components/TableTd'
+import ModalVerEscalas from './ModalVerEscalas'
+import TableThead from '../../../../shared/components/TableThead'
 
 const ModalCrearRegistro = (props) => {
     const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
     const [messageError, setMessageError] = useState(false);
     const [loading, setLoading] = useState(false);
     const {cerrarModal, versionSeleccionada} = props;
-    const [variables, setVariables] = useState([]);
-    const [frecuenciaMedicion, setFrecuenciaMedicion] = useState("");
     const [cambiosVariables, setCambiosVariables] = useState(0);
     const [valorVariables, setValorVariables] = useState([]);
+    const [resultadoPeriodo, setResultadoPeriodo] = useState(); 
+    const [modalActivo, setModalActivo] = useState("");
     const evaluarFormula = useFormulaEvaluator();
-    
-    // Obtener la información de la versión
+
     useEffect(() => {
         if (versionSeleccionada) {
-            setVariables(versionSeleccionada.variables);
-            setFrecuenciaMedicion(versionSeleccionada.frecuenciaMedicion);
-
-            // 🔥 Inicializamos valorVariables
             setValorVariables(
                 versionSeleccionada.variables.map(v => ({
                     alias: v.alias,
@@ -35,14 +37,31 @@ const ModalCrearRegistro = (props) => {
         }
     }, [versionSeleccionada]);
 
-
-    // Calcular el resultado del período
+    // Calcular el resultado del período automaticamente
     useEffect(() => {
-        if(cambiosVariables > 0){
-            const calculoFormula = evaluarFormula(versionSeleccionada?.formulaLatex, valorVariables);
-            console.log(calculoFormula)
-        }
-    }, [cambiosVariables])
+        const calcular = async () => {
+            if (cambiosVariables > 0) {
+            const calculoFormula = evaluarFormula(
+                versionSeleccionada?.formulaLatex,
+                valorVariables
+            );
+
+            if (calculoFormula === null) {
+                setResultadoPeriodo(null);
+                return;
+            }
+
+            const resultadoPeriodo = await calcularResultadoPeriodo(
+                versionSeleccionada?.metas?.[0],
+                calculoFormula
+            );
+
+            setResultadoPeriodo(resultadoPeriodo);
+            }
+        };
+
+        calcular();
+    }, [cambiosVariables]);
 
     const onSubmit = async(values) => {
         // setMessageError(false)
@@ -62,7 +81,7 @@ const ModalCrearRegistro = (props) => {
         // }
     }
 
-    return (
+    return (<>
         <Modal
             isOpenModal={true}
             setIsOpenModal={cerrarModal}
@@ -72,7 +91,7 @@ const ModalCrearRegistro = (props) => {
             <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
                 {/* Frecuencia de medicion */}
                 <div>
-                    {frecuenciaMedicion === "libre" && (
+                    {versionSeleccionada?.frecuenciaMedicion === "libre" && (
                         <div>
                             <label className="label-form" htmlFor='fechaRegistro'>Fecha del período <span className="input-required">*</span></label>
                             <input 
@@ -90,7 +109,7 @@ const ModalCrearRegistro = (props) => {
                         </div>
                     )}
 
-                    {frecuenciaMedicion === "mensual" && (
+                    {versionSeleccionada?.frecuenciaMedicion === "mensual" && (
                         <div>
                             <label className="label-form" htmlFor='fechaRegistro'>Fecha del período <span className="input-required">*</span></label>
                             <input 
@@ -108,7 +127,7 @@ const ModalCrearRegistro = (props) => {
                         </div>
                     )}
 
-                    {frecuenciaMedicion === "trimestral" && (<>
+                    {versionSeleccionada?.frecuenciaMedicion === "trimestral" && (<>
                         <label htmlFor="quarter" className="label-form">Selecciona el trimestre: <span className="input-required">*</span></label>
                         <select className='select-form' name="quarter" id="quarter">
                             <option value="Q1">Primer Trimestre (Ene-Mar)</option>
@@ -121,7 +140,7 @@ const ModalCrearRegistro = (props) => {
                         <input type="number" className='input-form' id="year" name="year" min="2000" max="2099" value="2025"></input>
                     </>)}
 
-                    {frecuenciaMedicion === "semestral" && (<>
+                    {versionSeleccionada?.frecuenciaMedicion === "semestral" && (<>
                         <label htmlFor="semester" className="label-form">Selecciona el semestre: <span className="input-required">*</span></label>
                             <select name="semester" id="semester" className='select-form'>
                             <option value="H1">Primer Semestre (Ene-Jun)</option>
@@ -132,16 +151,17 @@ const ModalCrearRegistro = (props) => {
                         <input className='input-form' type="number" id="year" name="year" min="2000" max="2099" value="2025" />
                     </>)}
 
-                    {frecuenciaMedicion === "anual" && (<>
+                    {versionSeleccionada?.frecuenciaMedicion === "anual" && (<>
                         <label htmlFor="year" className="label-form">Selecciona un período <span className="input-required">*</span></label>
                         <input className='input-form' type="number" id="year" name="year" min="1900" max="2099" step="1" placeholder="YYYY" value="2025"/>
                     </>)}
                 </div>
+
                 <div>
                     {/* Variables */}
                     <div className='mt-2'>
-                        <h3 className='font-semibold'>Variables: </h3>
-                        {variables.map(variable => <div className='mt-2' key={variable.id}>
+                        <h3 className='font-semibold'>Valores </h3>
+                        {versionSeleccionada?.variables.map(variable => <div className='mt-2' key={variable.id}>
                             <div className="flex items-center gap-1">
                                 <label className='label-form mb-0'>{variable.alias} <span className='text-red-600 mr-.5'>*</span></label>
                                 <button 
@@ -171,24 +191,43 @@ const ModalCrearRegistro = (props) => {
                     </div>
                 </div>
 
-                <div className='border border-gray-300 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mt-4'>
-                    <h2 className='font-bold text-center'>Resultado del período</h2>
-                    {/* Resultado del período */}
-                    <div className=''>
-                        <div className="rounded-md grid grid-cols-2 text-center mt-4">
-                            <div>
-                                <h2 className='font-semibold'>Valor</h2>
-                                <span>210</span>
-                            </div>
-                            <div>
-                                <h2 className='font-semibold'>Escala</h2>
-                                <div className='p-2 rounded-md bg-green-200 dark:bg-green-800 flex justify-center font-semibold text-sm'>
-                                    <span>Optimo</span>
-                                </div>
-                            </div>
-                        </div>
+                {resultadoPeriodo && (
+                    <div className="opacity-0 animate-fadeIn">
+                        <Table className='table-fixed'>
+                            <TableThead>
+                                <TableTr>
+                                    <TableTd colSpan={`2`} className='font-semibold'>Resultado del período</TableTd>
+                                </TableTr>
+                            </TableThead>
+                            <TableTbody>
+                                <TableTr>
+                                    <TableTd className='w-1/2 text-left'>Valor</TableTd>
+                                    <TableTd className='w-1/2'>{resultadoPeriodo?.resultado}</TableTd>
+                                </TableTr>
+                                <TableTr>
+                                    <TableTd className='text-left'>Escala</TableTd>
+                                    <TableTd>
+                                        <div
+                                            className={`p-2 rounded-md flex justify-center font-semibold text-sm
+                                                ${getResultadoColor(resultadoPeriodo?.resultadoPeriodo)}`}
+                                        >
+                                            <span>{etiquetasResultado[resultadoPeriodo?.resultadoPeriodo]}</span>
+                                        </div>
+                                    </TableTd>
+                                </TableTr>
+                            </TableTbody>
+                        </Table>
+                        <Button 
+                            className="mt-3"
+                            type={`button`}
+                            textButton={`Ver escalas`}
+                            colorButton={`secondary`}
+                            onClick ={() => {
+                                setModalActivo("ver-escalas")
+                            }}
+                        />
                     </div>
-                </div>
+                )}
 
                 {/* Análisis */}
                 <div className='mt-2'>
@@ -221,7 +260,13 @@ const ModalCrearRegistro = (props) => {
             </form>
             <Tooltip id="home-tip" place="top" />
         </Modal>
-    )
+        {modalActivo && (
+            <ModalVerEscalas
+                versionSeleccionada = {versionSeleccionada}
+                cerrarModal={() => setModalActivo("")}
+            />
+        )}
+    </>)
 }
 
 export default ModalCrearRegistro

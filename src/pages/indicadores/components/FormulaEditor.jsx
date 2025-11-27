@@ -40,8 +40,7 @@ const FormulaEditor = ({ valueFormula, setValueFormula, variables = [], setError
         clearErrors("formulaLaTex");
       }
     }
-  }, [valueFormula, variables, errors.formulaLaTex]);
-
+  }, [valueFormula, variables, errors?.formulaLaTex]);
 
   const styleCorrecto = errors.formulaLaTex ? {
     width: "100%",

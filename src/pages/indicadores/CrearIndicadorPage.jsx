@@ -4,13 +4,11 @@ import FormIndicador from './components/Indicador/FormIndicador';
 import { obtenerTodosProcesos } from '../configuracion/services/procesoServices';
 import { useSelector } from 'react-redux';
 import { crearIndicador } from './services/indicadoresServices';
-import { useNavigate } from 'react-router-dom';
 import { handleErrors } from '../../utils/handleErrors';
 
 const CrearIndicadorPage = () => {
     const [procesos, setProcesos] = useState([]);
     const empresaId = useSelector(state => state?.empresa?.empresa?.id);
-    const navigate = useNavigate();
 
     // obtener todos los procesos
     useEffect(() => {

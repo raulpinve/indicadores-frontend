@@ -90,9 +90,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-      <Toaster richColors position="bottom-right" />
-    </BrowserRouter>
-  )
+    <Toaster richColors position="bottom-right" />
+  </BrowserRouter>)
 }
 
 export default App
