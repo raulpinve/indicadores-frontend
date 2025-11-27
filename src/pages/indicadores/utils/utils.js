@@ -14,7 +14,7 @@ export const calcularResultadoPeriodo = async (meta = {}, resultado) => {
 
     const getResponse = (estado) => ({
         resultado,
-        resultadoPeriodo: estado
+        estadoResultado: estado
     });
 
     if (tipoMeta === "absoluta") {

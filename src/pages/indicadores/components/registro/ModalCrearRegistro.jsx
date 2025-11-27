@@ -14,12 +14,14 @@ import TableTr from '../../../../shared/components/TableTr'
 import TableTd from '../../../../shared/components/TableTd'
 import ModalVerEscalas from './ModalVerEscalas'
 import TableThead from '../../../../shared/components/TableThead'
+import { crearRegistro } from '../../services/registrosServices'
+import { toast } from 'sonner'
 
 const ModalCrearRegistro = (props) => {
     const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
     const [messageError, setMessageError] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {cerrarModal, versionSeleccionada} = props;
+    const {cerrarModal, versionSeleccionada, setRegistros} = props;
     const [cambiosVariables, setCambiosVariables] = useState(0);
     const [valorVariables, setValorVariables] = useState([]);
     const [resultadoPeriodo, setResultadoPeriodo] = useState(); 
@@ -63,22 +65,50 @@ const ModalCrearRegistro = (props) => {
         calcular();
     }, [cambiosVariables]);
 
+    useEffect(() => {
+        setValue("fechaLibre", "2025-08-05");
+        setValue("analisis", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua")
+    }, [])
+
     const onSubmit = async(values) => {
-        // setMessageError(false)
-        // setLoading(true)
-        // try {
-        //     const result = await crearEmpresa(values)
-        //     const { data } = result 
-        //     setEmpresas(prevGrupos => [data, ...prevGrupos]);
-        //     cerrarModal();
-        //     setValue("nombre", "");
-        //     toast.success(`La empresa ha sido creada exitosamente.`);
-        //     reset();
-        // } catch (error) {
-        //     handleErrors(error, setError, setMessageError);
-        // } finally{
-        //     setLoading(false)
-        // }
+        setMessageError(false);
+        setLoading(true);
+        try {
+            const data = {
+                ...values,
+                variables: valorVariables,
+                versionId: versionSeleccionada?.id,
+                resultado: resultadoPeriodo?.resultado,
+                estadoResultado: resultadoPeriodo?.estadoResultado
+            }
+            const result = await crearRegistro(data)
+
+            const { data: resultData } = result 
+            setRegistros(prevGrupos => [resultData, ...prevGrupos]);
+            cerrarModal();
+            setValue("fechaLibre", "");
+            setValue("analisis", "");
+            setCambiosVariables(0);
+            setValorVariables([]);
+            toast.success(`El registro ha sido creado exitosamente.`);
+            reset();
+        } catch (error) {
+            const responseData = error?.response?.data || error; 
+            const fieldErrors = responseData?.error?.fieldErrors;
+
+            if (responseData?.statusCode === 400 && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+                // Recorrer los errores
+                fieldErrors.forEach(({ field, message }) => {
+                    if(field === "resultado" || field === "estadoResultado"){
+                        setMessageError("Debe agregar toda la información de las variables");
+                    }else{
+                        setError(field, { type: "server", message });
+                    }
+                })
+            }
+        } finally{
+            setLoading(false)
+        }
     }
 
     return (<>
@@ -91,13 +121,14 @@ const ModalCrearRegistro = (props) => {
             <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
                 {/* Frecuencia de medicion */}
                 <div>
+                    {/* Libre */}
                     {versionSeleccionada?.frecuenciaMedicion === "libre" && (
                         <div>
-                            <label className="label-form" htmlFor='fechaRegistro'>Fecha del período <span className="input-required">*</span></label>
+                            <label className="label-form" htmlFor='fechaLibre'>Fecha del período <span className="input-required">*</span></label>
                             <input 
                                 type='date'
-                                className={`${errors.fechaRegistro && errors.fechaRegistro.message ? 'input-form-error' : ''} input-form`}
-                                {...register('fechaRegistro', {
+                                className={`${errors.fechaLibre && errors.fechaLibre.message ? 'input-form-error' : ''} input-form`}
+                                {...register('fechaLibre', {
                                     required: {
                                         value: true,
                                         message: 'Debe seleccionar una fecha de registro.',
@@ -105,17 +136,18 @@ const ModalCrearRegistro = (props) => {
                                 })}
                                 id="name"
                             />
-                            {errors.fechaRegistro && errors.fechaRegistro.message && (<p className="input-message-error">{errors.fechaRegistro.message}</p>)} 
+                            {errors.fechaLibre && errors.fechaLibre.message && (<p className="input-message-error">{errors.fechaLibre.message}</p>)} 
                         </div>
                     )}
 
+                    {/* Mensual */}
                     {versionSeleccionada?.frecuenciaMedicion === "mensual" && (
                         <div>
-                            <label className="label-form" htmlFor='fechaRegistro'>Fecha del período <span className="input-required">*</span></label>
+                            <label className="label-form" htmlFor='fechaLibre'>Fecha del período <span className="input-required">*</span></label>
                             <input 
                                 type='month'
-                                className={`${errors.fechaRegistro && errors.fechaRegistro.message ? 'input-form-error' : ''} input-form`}
-                                {...register('fechaRegistro', {
+                                className={`${errors.fechaLibre && errors.fechaLibre.message ? 'input-form-error' : ''} input-form`}
+                                {...register('fechaLibre', {
                                     required: {
                                         value: true,
                                         message: 'Debe seleccionar una fecha de registro.',
@@ -123,7 +155,7 @@ const ModalCrearRegistro = (props) => {
                                 })}
                                 id="name"
                             />
-                            {errors.fechaRegistro && errors.fechaRegistro.message && (<p className="input-message-error">{errors.fechaRegistro.message}</p>)} 
+                            {errors.fechaLibre && errors.fechaLibre.message && (<p className="input-message-error">{errors.fechaLibre.message}</p>)} 
                         </div>
                     )}
 
@@ -165,6 +197,7 @@ const ModalCrearRegistro = (props) => {
                             <div className="flex items-center gap-1">
                                 <label className='label-form mb-0'>{variable.alias} <span className='text-red-600 mr-.5'>*</span></label>
                                 <button 
+                                    type='button'
                                     data-tooltip-id="home-tip"
                                     data-tooltip-content={variable.descripcion}
                                 >
@@ -209,9 +242,9 @@ const ModalCrearRegistro = (props) => {
                                     <TableTd>
                                         <div
                                             className={`p-2 rounded-md flex justify-center font-semibold text-sm
-                                                ${getResultadoColor(resultadoPeriodo?.resultadoPeriodo)}`}
+                                                ${getResultadoColor(resultadoPeriodo?.estadoResultado)}`}
                                         >
-                                            <span>{etiquetasResultado[resultadoPeriodo?.resultadoPeriodo]}</span>
+                                            <span>{etiquetasResultado[resultadoPeriodo?.estadoResultado]}</span>
                                         </div>
                                     </TableTd>
                                 </TableTr>
@@ -231,8 +264,16 @@ const ModalCrearRegistro = (props) => {
 
                 {/* Análisis */}
                 <div className='mt-2'>
-                    <label className="label-form" htmlFor='analisis'>Análisis<span className="text-red-600">*</span></label>
-                    <textarea className='input-form h-20 resize-none' name="" id=""></textarea>
+                    <label className="label-form" htmlFor='analisis'>
+                        Análisis<span className="text-red-600">*</span>
+                    </label>
+                    <textarea 
+                        className='input-form h-20 resize-none' 
+                        {...register("analisis", { 
+                            required: true,
+
+                        })}
+                    ></textarea>
                     {errors.analisis && errors.analisis.message && (<p className="input-message-error">{errors.analisis.message}</p>)} 
                 </div>
                 <p className='text-sm my-2'>

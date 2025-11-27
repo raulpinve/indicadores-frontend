@@ -14,6 +14,7 @@ import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
 const Registros = (props) => {
     const { versionSeleccionada } = props;
     const [modalActivo, setModalActivo] = useState("crear");
+    const [registros, setRegistros] = useState([]);
     
     return (<>
         <Card>
@@ -80,6 +81,7 @@ const Registros = (props) => {
             <ModalCrearRegistro 
                 cerrarModal = {()=> setModalActivo("")}
                 versionSeleccionada = {versionSeleccionada}
+                setRegistros = {setRegistros}
             />
         )}
     </>);
