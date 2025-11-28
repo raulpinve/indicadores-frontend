@@ -67,6 +67,8 @@ const ModalCrearRegistro = (props) => {
 
     useEffect(() => {
         setValue("fechaLibre", "2025-08-05");
+        setValue("anio", 2025);
+        setValue("mes", 12);
         setValue("analisis", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua")
     }, [])
 
@@ -141,51 +143,168 @@ const ModalCrearRegistro = (props) => {
                     )}
 
                     {/* Mensual */}
-                    {versionSeleccionada?.frecuenciaMedicion === "mensual" && (
+                    {versionSeleccionada?.frecuenciaMedicion === "mensual" && (<>
+                        {/* Mes */}
                         <div>
-                            <label className="label-form" htmlFor='fechaLibre'>Fecha del período <span className="input-required">*</span></label>
+                            <label htmlFor="mes" className="label-form">Mes: <span className="input-required">*</span></label>
+                            <select 
+                                {...register("mes", {
+                                    required: {
+                                        value: true, 
+                                        message: "Debe seleccionar un mes",
+                                    }
+                                })}
+                                className={`${errors.mes ? 'select-form-error' : ''} select-form`}
+                            >
+                                <option value="" disabled selected>Seleccionar</option>
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                            {errors.mes && errors.mes.message && (<p className="input-message-error">{errors.mes.message}</p>)} 
+                        </div>
+
+                        {/* Año */}
+                        <div>
+                            <label htmlFor="anio" className="label-form">
+                                Año: <span className="input-required">*</span>
+                            </label>
                             <input 
-                                type='month'
-                                className={`${errors.fechaLibre && errors.fechaLibre.message ? 'input-form-error' : ''} input-form`}
-                                {...register('fechaLibre', {
+                                type="number" 
+                                {...register("anio", {
                                     required: {
                                         value: true,
-                                        message: 'Debe seleccionar una fecha de registro.',
-                                    },
+                                        message: "Debe ingresar un año"
+                                    }
                                 })}
-                                id="name"
-                            />
-                            {errors.fechaLibre && errors.fechaLibre.message && (<p className="input-message-error">{errors.fechaLibre.message}</p>)} 
+                                className={`${errors.anio ? 'select-form-error' : ''} select-form`}
+                                id="anio" 
+                                name="anio" 
+                                min="2000" 
+                                max="2099" 
+                            ></input>
+                            {errors.anio && errors.anio.message && (<p className="input-message-error">{errors.anio.message}</p>)} 
                         </div>
-                    )}
+                    </>)}
 
+                    {/* Trimestral */}
                     {versionSeleccionada?.frecuenciaMedicion === "trimestral" && (<>
-                        <label htmlFor="quarter" className="label-form">Selecciona el trimestre: <span className="input-required">*</span></label>
-                        <select className='select-form' name="quarter" id="quarter">
-                            <option value="Q1">Primer Trimestre (Ene-Mar)</option>
-                            <option value="Q2">Segundo Trimestre (Abr-Jun)</option>
-                            <option value="Q3">Tercer Trimestre (Jul-Sep)</option>
-                            <option value="Q4">Cuarto Trimestre (Oct-Dic)</option>
-                        </select>
-
-                        <label htmlFor="year" className="label-form">Selecciona el año: <span className="input-required">*</span></label>
-                        <input type="number" className='input-form' id="year" name="year" min="2000" max="2099" value="2025"></input>
+                        {/* Trimestre */}
+                        <div>
+                            <label htmlFor="trimestre" className="label-form">Trimestre: <span className="input-required">*</span></label>
+                            <select 
+                                {...register("trimestre", {
+                                    required: {
+                                        value: true, 
+                                        message: "Debe seleccionar un trimestre",
+                                    }
+                                })}
+                                className={`${errors.trimestre ? 'select-form-error' : ''} select-form`}
+                            >
+                                <option value="1">Primer Trimestre (Ene-Mar)</option>
+                                <option value="2">Segundo Trimestre (Abr-Jun)</option>
+                                <option value="3">Tercer Trimestre (Jul-Sep)</option>
+                                <option value="4">Cuarto Trimestre (Oct-Dic)</option>
+                            </select>
+                            {errors.trimestre && errors.trimestre.message && (<p className="input-message-error">{errors.trimestre.message}</p>)} 
+                        </div>
+                        {/* Año */}
+                        <div>
+                            <label htmlFor="anio" className="label-form">
+                                Año: <span className="input-required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                {...register("anio", {
+                                    required: {
+                                        value: true,
+                                        message: "Debe ingresar un año"
+                                    }
+                                })}
+                                className={`${errors.anio ? 'select-form-error' : ''} select-form`}
+                                id="anio" 
+                                name="anio" 
+                                min="2000" 
+                                max="2099" 
+                            ></input>
+                            {errors.anio && errors.anio.message && (<p className="input-message-error">{errors.anio.message}</p>)} 
+                        </div>
                     </>)}
-
+                    
+                    {/* Semestral */}
                     {versionSeleccionada?.frecuenciaMedicion === "semestral" && (<>
-                        <label htmlFor="semester" className="label-form">Selecciona el semestre: <span className="input-required">*</span></label>
-                            <select name="semester" id="semester" className='select-form'>
-                            <option value="H1">Primer Semestre (Ene-Jun)</option>
-                            <option value="H2">Segundo Semestre (Jul-Dic)</option>
+                        {/* Semestre */}
+                        <label htmlFor="semestre" className="label-form">
+                            Semestre: <span className="input-required">*</span>
+                        </label>
+                        <select 
+                            {...register("semestre", {
+                                required: {
+                                    value: true, 
+                                    message: "Debe seleccionar un semestre",
+                                }
+                            })}
+                            className={`${errors.semestre ? 'select-form-error' : ''} select-form`}
+                        >
+                            <option value="1">Primer Semestre (Ene-Jun)</option>
+                            <option value="2">Segundo Semestre (Jul-Dic)</option>
                         </select>
 
-                        <label htmlFor="year" className="label-form">Selecciona el año: <span className="input-required">*</span></label>
-                        <input className='input-form' type="number" id="year" name="year" min="2000" max="2099" value="2025" />
+                        {/* Año */}
+                        <div>
+                            <label htmlFor="anio" className="label-form">
+                                Año: <span className="input-required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                {...register("anio", {
+                                    required: {
+                                        value: true,
+                                        message: "Debe ingresar un año"
+                                    }
+                                })}
+                                className={`${errors.anio ? 'select-form-error' : ''} select-form`}
+                                id="anio" 
+                                name="anio" 
+                                min="2000" 
+                                max="2099" 
+                            ></input>
+                            {errors.anio && errors.anio.message && (<p className="input-message-error">{errors.anio.message}</p>)} 
+                        </div>
                     </>)}
 
+                    {/* Anual */}
                     {versionSeleccionada?.frecuenciaMedicion === "anual" && (<>
-                        <label htmlFor="year" className="label-form">Selecciona un período <span className="input-required">*</span></label>
-                        <input className='input-form' type="number" id="year" name="year" min="1900" max="2099" step="1" placeholder="YYYY" value="2025"/>
+                        {/* Año */}
+                        <div>
+                            <label htmlFor="anio" className="label-form">
+                                Año: <span className="input-required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                {...register("anio", {
+                                    required: {
+                                        value: true,
+                                        message: "Debe ingresar un año"
+                                    }
+                                })}
+                                className={`${errors.anio ? 'select-form-error' : ''} select-form`}
+                                id="anio" 
+                                name="anio" 
+                                min="2000" 
+                                max="2099" 
+                            ></input>
+                            {errors.anio && errors.anio.message && (<p className="input-message-error">{errors.anio.message}</p>)} 
+                        </div>
                     </>)}
                 </div>
 
