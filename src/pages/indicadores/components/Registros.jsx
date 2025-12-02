@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardTitulo from '../../../shared/components/CardTitulo';
 import Card from '../../../shared/components/Card';
 import Button from '../../../shared/components/Button';
@@ -10,12 +10,27 @@ import TableTbody from '../../../shared/components/TableTbody';
 import TableTd from '../../../shared/components/TableTd';
 import { LuFolder, LuPencil, LuTrash2 } from 'react-icons/lu';
 import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
+import { obtenerRegistros } from '../services/registrosServices.js';
+import { etiquetasResultado, formatPeriodo, getResultadoColor } from '../utils/utils.js';
 
 const Registros = (props) => {
     const { versionSeleccionada } = props;
-    const [modalActivo, setModalActivo] = useState("crear");
+    const [modalActivo, setModalActivo] = useState("");
     const [registros, setRegistros] = useState([]);
-    
+
+    // Obtener los registros
+    useEffect(() => {
+        const fetchRegistros = async () => {
+            try {
+                const resultado = await obtenerRegistros(versionSeleccionada?.id);
+                setRegistros(resultado.data);
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchRegistros();
+    }, [])
+
     return (<>
         <Card>
             <CardTitulo>
@@ -41,39 +56,43 @@ const Registros = (props) => {
                     </TableTr>
                 </TableThead>
                 <TableTbody>
-                    <TableTr>
-                        <TableTd>16/05/2025</TableTd>
-                        <TableTd>
-                            <div className="flex justify-center gap-2 items-center">
-                                <span className='font-semibold'>70</span>
-                                <div className="bg-green-200 dark:bg-green-800 dark:text-white py-1.5 px-2 text-xs rounded-md font-semibold">Óptimo</div>
-                            </div>
-                        </TableTd>
-                        <TableTd>
-                            <div className="flex justify-center">
-                                <Button colorButton={`secondary`}>
-                                    <LuFolder />
-                                </Button>
-                            </div>
-                        </TableTd>
-                        <TableTd >
-                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium</p>
-                        </TableTd>
-                        <TableTd>
-                            <div className="flex justify-center gap-1">
-                                <Button
-                                    colorButton={`secondary`}
-                                >
-                                    <LuPencil />
-                                </Button>
-                                <Button 
-                                    colorButton={`danger`}
-                                >
-                                    <LuTrash2 />
-                                </Button>
-                            </div>
-                        </TableTd>
-                    </TableTr>
+                    {registros.map(registro => 
+                        <TableTr key={registro.id}>
+                            <TableTd>{formatPeriodo(registro)}</TableTd>
+                            <TableTd>
+                                <div className="flex justify-center gap-2 items-center">
+                                    <span className='font-semibold'>{registro.resultado}</span>
+                                    <div className={`${getResultadoColor(registro.estadoResultado)} dark:text-white py-1.5 px-2 text-xs rounded-md font-semibold`}>
+                                        {etiquetasResultado[registro.estadoResultado]}
+                                    </div>
+                                </div>
+                            </TableTd>
+                            <TableTd>
+                                <div className="flex justify-center">
+                                    <Button colorButton={`secondary`}>
+                                        <LuFolder />
+                                    </Button>
+                                </div>
+                            </TableTd>
+                            <TableTd >
+                                <p>{registro.analisis}</p>
+                            </TableTd>
+                            <TableTd>
+                                <div className="flex justify-center gap-1">
+                                    <Button
+                                        colorButton={`secondary`}
+                                    >
+                                        <LuPencil />
+                                    </Button>
+                                    <Button 
+                                        colorButton={`danger`}
+                                    >
+                                        <LuTrash2 />
+                                    </Button>
+                                </div>
+                            </TableTd>
+                        </TableTr>
+                    )}
                 </TableTbody>
             </Table>
         </Card>

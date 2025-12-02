@@ -1,3 +1,8 @@
+const MESES_COMPLETOS = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
 export const calcularResultadoPeriodo = async (meta = {}, resultado) => {
     const {
         direccion = "desc",
@@ -48,6 +53,43 @@ export const getResultadoColor = (estado) => {
         return "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100";
     }
 };
+
+export function formatPeriodo(registro) {
+  const { frecuencia, anio, mes, trimestre, semestre, fechaLibre } = registro;
+
+  switch (frecuencia) {
+    case "mensual":
+      return `${MESES_COMPLETOS[mes - 1]} ${anio}`;
+
+    case "trimestral": {
+      const inicio = (trimestre - 1) * 3;
+      const fin = inicio + 2;
+      return `${MESES_COMPLETOS[inicio]} – ${MESES_COMPLETOS[fin]} ${anio}`;
+    }
+
+    case "semestral": {
+      const inicio = semestre === 1 ? 0 : 6;
+      const fin = inicio + 5;
+      return `${MESES_COMPLETOS[inicio]} – ${MESES_COMPLETOS[fin]} ${anio}`;
+    }
+
+    case "anual":
+      return `${anio}`;
+
+    case "libre":
+      return fechaLibre
+        ? new Date(fechaLibre).toLocaleDateString("es-CO", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          })
+        : "Fecha libre";
+
+    default:
+      return "-";
+  }
+}
+
 
 export const etiquetasResultado = {
     optimo: "Óptimo",
