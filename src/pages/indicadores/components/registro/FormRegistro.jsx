@@ -15,7 +15,7 @@ import VerEscalas from './VerEscalas';
 import TableTh from '../../../../shared/components/TableTh';
 
 const FormRegistro = (props) => {
-    const {versionSeleccionada, onSubmitFormulario, cerrarModal, messageError, loading} = props;
+    const {versionSeleccionada, onSubmitFormulario, cerrarModal, messageError, loading, registroSeleccionado} = props;
     const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
     const [cambiosVariables, setCambiosVariables] = useState(0);
     const [valorVariables, setValorVariables] = useState([]);
@@ -23,22 +23,48 @@ const FormRegistro = (props) => {
     const evaluarFormula = useFormulaEvaluator();
 
     useEffect(() => {
-        setValue("fechaLibre", "2025-08-05");
-        setValue("anio", 2025);
-        setValue("mes", 12);
-        setValue("analisis", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua")
-    }, [])
+        if(registroSeleccionado){
+            setValue("fechaLibre", registroSeleccionado?.fechaLibre);
+            setValue("semestre", registroSeleccionado?.semestre);
+            setValue("trimestre", registroSeleccionado?.trimestre);
+            setValue("anio", registroSeleccionado?.anio);
+            setValue("mes", registroSeleccionado?.mes);
+            setValue("resultado", registroSeleccionado?.resultado);
+            setValue("analisis",  registroSeleccionado?.analisis)
+        }
+    }, [registroSeleccionado, setValue])
 
     useEffect(() => {
-        if (versionSeleccionada) {
+        if (!versionSeleccionada) return;
+
+        // Si NO hay registro seleccionado → crear
+        if (!registroSeleccionado) {
             setValorVariables(
                 versionSeleccionada.variables.map(v => ({
+                    variableId: v.id,
                     alias: v.alias,
                     valor: ""
                 }))
             );
+            return;
         }
-    }, [versionSeleccionada]);
+
+        // Si hay registro seleccionado → editar
+        setValorVariables(
+            versionSeleccionada.variables.map(v => {
+                // Encontrar la variable ya guardada en el registro
+                const existente = registroSeleccionado.variables
+                    ?.find(rv => rv.variableId === v.id);
+
+                return {
+                    variableId: v.id,
+                    alias: v.alias,
+                    valor: existente?.valor ?? ""
+                };
+            })
+        );
+
+    }, [versionSeleccionada, registroSeleccionado]);
 
     // Calcular el resultado del período automaticamente
     useEffect(() => {
@@ -69,7 +95,7 @@ const FormRegistro = (props) => {
     const enviarFormulario = async (values) => {
         const data = {
             ...values,
-            variables: valorVariables,
+            valoresVariables: valorVariables,
             versionId: versionSeleccionada?.id,
             resultado: resultadoPeriodo?.resultado,
             estadoResultado: resultadoPeriodo?.estadoResultado

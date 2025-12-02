@@ -12,11 +12,13 @@ import { LuFolder, LuPencil, LuTrash2 } from 'react-icons/lu';
 import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
 import { obtenerRegistros } from '../services/registrosServices.js';
 import { etiquetasResultado, formatPeriodo, getResultadoColor } from '../utils/utils.js';
+import ModalEditarRegistro from './registro/ModalEditarRegistro.jsx';
 
 const Registros = (props) => {
-    const { versionSeleccionada } = props;
+    const {versionSeleccionada} = props;
     const [modalActivo, setModalActivo] = useState("");
     const [registros, setRegistros] = useState([]);
+    const [registroSeleccionado, setRegistroSeleccionado] = useState();
 
     // Obtener los registros
     useEffect(() => {
@@ -81,6 +83,10 @@ const Registros = (props) => {
                                 <div className="flex justify-center gap-1">
                                     <Button
                                         colorButton={`secondary`}
+                                        onClick= {() => {
+                                            setModalActivo("editar");
+                                            setRegistroSeleccionado(registro)
+                                        }}
                                     >
                                         <LuPencil />
                                     </Button>
@@ -100,6 +106,15 @@ const Registros = (props) => {
             <ModalCrearRegistro 
                 cerrarModal = {()=> setModalActivo("")}
                 versionSeleccionada = {versionSeleccionada}
+                setRegistros = {setRegistros}
+            />
+        )}
+
+        {modalActivo === "editar" && (
+            <ModalEditarRegistro 
+                cerrarModal = {()=> setModalActivo("")}
+                versionSeleccionada = {versionSeleccionada}
+                registroSeleccionado = {registroSeleccionado}
                 setRegistros = {setRegistros}
             />
         )}
