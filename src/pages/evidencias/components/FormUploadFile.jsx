@@ -94,7 +94,7 @@ const FormUploadFile = (props) => {
 
     return (
         <div>
-            <label htmlFor="files" className='button-form flex w-[130px] button-form-secondary text-sm'>
+            <label htmlFor="files" className='button-form flex w-[130px] button-form-secondary text-sm select-none'>
                 <LuPaperclip />
                 <span>Subir archivo</span>
                 <input

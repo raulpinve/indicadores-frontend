@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 import { host } from '../../utils/config';
 import ModalAdvertencia from '../../shared/components/ModalAdvertencia';
 import ModalEliminarEvidencia from './components/ModalEliminarEvidencia';
+import Pagination from '../../shared/components/Pagination';
 
 const EvidenciasPage = () => {
     const [versionIndicador, setVersionIndicador] = useState();
@@ -28,12 +29,13 @@ const EvidenciasPage = () => {
     const [loading, setLoading] = useState(true);
     const [consulta, setConsulta] = useState("");
     const [registro, setRegistro] = useState();
-    const [pagina, setPagina] = useState(0);
     const {registroId} = useParams();
     const [modalActivo, setModalActivo] = useState("");
     const [messageErrorDownload, setMessageErrorDownload] = useState("");
     const [evidenciaSeleccionada, setEvidenciaSeleccionada] = useState();
     const debouncedConsulta = useDebounce(consulta, 500);
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     // Obtener información del registro
     useEffect(() => {
@@ -51,7 +53,7 @@ const EvidenciasPage = () => {
                 if(!isActive) return;
                 setVersionIndicador(resultadoVersion?.data)
 
-                const resultadoEvidencias = await obtenerEvidencias(pagina, debouncedConsulta, resultadoRegistro?.data?.id)
+                const resultadoEvidencias = await obtenerEvidencias(paginaActual, debouncedConsulta, resultadoRegistro?.data?.id)
                 if(!isActive) return;
                 setEvidencias(resultadoEvidencias?.data);
 
@@ -234,6 +236,13 @@ const EvidenciasPage = () => {
                         )}
                     </TableTbody>
                 </Table>
+                {!loading && (
+                    <Pagination
+                        paginaActual={paginaActual}
+                        totalPaginas={totalPaginas}
+                        onPageChange={setPaginaActual}
+                    />
+                )}
             </Card>
         </>)}
         {modalActivo === "advertencia" && (
