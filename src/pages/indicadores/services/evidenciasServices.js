@@ -6,3 +6,8 @@ export const obtenerEvidencias = async (pagina, consulta, registroId) => {
     });
     return response.data;
 };
+
+export const eliminarEvidencia = async (evidenciaId) => {
+    const response = await api.delete(`/evidencias/${evidenciaId}`);
+    return response.data;
+}

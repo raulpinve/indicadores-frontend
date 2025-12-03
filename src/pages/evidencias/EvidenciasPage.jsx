@@ -19,6 +19,7 @@ import LoadingEvidencias from './components/LoadingEvidencias';
 import { useSelector } from 'react-redux';
 import { host } from '../../utils/config';
 import ModalAdvertencia from '../../shared/components/ModalAdvertencia';
+import ModalEliminarEvidencia from './components/ModalEliminarEvidencia';
 
 const EvidenciasPage = () => {
     const [versionIndicador, setVersionIndicador] = useState();
@@ -31,6 +32,7 @@ const EvidenciasPage = () => {
     const {registroId} = useParams();
     const [modalActivo, setModalActivo] = useState("");
     const [messageErrorDownload, setMessageErrorDownload] = useState("");
+    const [evidenciaSeleccionada, setEvidenciaSeleccionada] = useState();
     const debouncedConsulta = useDebounce(consulta, 500);
 
     // Obtener información del registro
@@ -148,7 +150,6 @@ const EvidenciasPage = () => {
         }
     }
 
-
     return (<>
         {loading && (<LoadingEvidencias />)}
         {!loading && (<>
@@ -220,6 +221,10 @@ const EvidenciasPage = () => {
                                         <Button
                                             colorButton={`danger`}
                                             title="Eliminar"
+                                            onClick={() =>{
+                                                setModalActivo("eliminar-evidencia");
+                                                setEvidenciaSeleccionada(evidencia)
+                                            }}
                                         >   
                                             <LuTrash2 />
                                         </Button>
@@ -238,6 +243,16 @@ const EvidenciasPage = () => {
                 }}
                 title={`Error`}
                 message= {messageErrorDownload}
+            />
+        )}
+
+        {modalActivo === "eliminar-evidencia" && (
+            <ModalEliminarEvidencia 
+                cerrarModal= {() => {
+                    setModalActivo("");
+                }}
+                setEvidencias = {setEvidencias}
+                evidenciaSeleccionada = {evidenciaSeleccionada}
             />
         )}
     </>);
