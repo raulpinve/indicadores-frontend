@@ -13,6 +13,7 @@ import ModalCrearRegistro from './registro/ModalCrearRegistro.jsx';
 import { obtenerRegistros } from '../services/registrosServices.js';
 import { etiquetasResultado, formatPeriodo, getResultadoColor } from '../utils/utils.js';
 import ModalEditarRegistro from './registro/ModalEditarRegistro.jsx';
+import ModalEliminarRegistro from './registro/ModalEliminarRegistro.jsx';
 
 const Registros = (props) => {
     const {versionSeleccionada} = props;
@@ -92,6 +93,10 @@ const Registros = (props) => {
                                     </Button>
                                     <Button 
                                         colorButton={`danger`}
+                                        onClick={() => {
+                                            setModalActivo("eliminar");
+                                            setRegistroSeleccionado(registro);
+                                        }}
                                     >
                                         <LuTrash2 />
                                     </Button>
@@ -116,6 +121,14 @@ const Registros = (props) => {
                 versionSeleccionada = {versionSeleccionada}
                 registroSeleccionado = {registroSeleccionado}
                 setRegistros = {setRegistros}
+            />
+        )}
+
+        {modalActivo === "eliminar" && (
+            <ModalEliminarRegistro 
+                cerrarModal={() => setModalActivo("")}
+                registroSeleccionado = {registroSeleccionado}
+                setRegistros={setRegistros}
             />
         )}
     </>);

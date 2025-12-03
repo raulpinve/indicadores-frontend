@@ -14,3 +14,8 @@ export const obtenerRegistros = async (versionId) => {
     const response = await api.get(`/registros/${versionId}/todos`);
     return response.data;
 }
+
+export const eliminarRegistro = async (versionId) => {
+    const response = await api.delete(`/registros/${versionId}`);
+    return response.data;
+}

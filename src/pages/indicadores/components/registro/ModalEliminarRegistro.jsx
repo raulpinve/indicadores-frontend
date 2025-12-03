@@ -4,27 +4,27 @@ import Button from '../../../../shared/components/Button'
 import Modal from '../../../../shared/components/Modal'
 import React, { useState } from 'react'
 import { toast } from 'sonner'
-import { eliminarProceso } from '../../services/procesoServices'
+import { eliminarRegistro } from '../../services/registrosServices'
 
-const ModalEliminarProceso = (props) => {
-    const { cerrarModal, setProcesos, procesoSeleccionado } = props
+const ModalEliminarRegistro = (props) => {
+    const { cerrarModal, setRegistros, registroSeleccionado } = props
     const [confirmText, setConfirmText] = useState("")
     const [messageError, setMessageError] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const onDelete = async () => {
         if (confirmText !== "ELIMINAR") {
-            setMessageError("Debes escribir ELIMINAR para confirmar la eliminación.")
-            return
+            setMessageError("Debes escribir ELIMINAR para confirmar la eliminación.");
+            return;
         }
 
-        setMessageError(false)
-        setLoading(true)
+        setMessageError(false);
+        setLoading(true);
         try {
-            await eliminarProceso(procesoSeleccionado.id)
-            setProcesos(prevProcesos => prevProcesos.filter(e => e.id !== procesoSeleccionado.id))
+            await eliminarRegistro(registroSeleccionado.id)
+            setRegistros(prevRegistros => prevRegistros.filter(e => e.id !== registroSeleccionado?.id))
             cerrarModal()
-            toast.success(`El proceso "${procesoSeleccionado.nombre}" fue eliminado exitosamente.`)
+            toast.success(`El registro fue eliminado exitosamente.`)
         } catch (error) {
             handleErrors(error, () => {}, setMessageError)
         } finally {
@@ -36,13 +36,12 @@ const ModalEliminarProceso = (props) => {
         <Modal
             isOpenModal={true}
             setIsOpenModal={cerrarModal}
-            title="Eliminar proceso"
+            title="Eliminar registro"
             size="md"
         >
             <div>
                 <p className="mb-3">
-                    Para eliminar el proceso <strong>{procesoSeleccionado?.nombre}</strong>, 
-                    escribe <span className="font-semibold">ELIMINAR</span> en el campo de abajo:
+                    Para eliminar el registro escribe <span className="font-semibold">ELIMINAR</span> en el campo de abajo:
                 </p>
 
                 <input
@@ -76,4 +75,4 @@ const ModalEliminarProceso = (props) => {
     )
 }
 
-export default ModalEliminarProceso
+export default ModalEliminarRegistro
