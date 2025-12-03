@@ -30,7 +30,12 @@ const FormRegistro = (props) => {
             setValue("anio", registroSeleccionado?.anio);
             setValue("mes", registroSeleccionado?.mes);
             setValue("resultado", registroSeleccionado?.resultado);
-            setValue("analisis",  registroSeleccionado?.analisis)
+            setValue("analisis",  registroSeleccionado?.analisis);
+
+            setResultadoPeriodo({
+                resultado: registroSeleccionado.resultado,
+                estadoResultado: registroSeleccionado.estadoResultado
+            });
         }
     }, [registroSeleccionado, setValue])
 
@@ -350,9 +355,9 @@ const FormRegistro = (props) => {
                 
                     </div>
                     {!resultadoPeriodo && (<div 
-                        className='flex items-center justify-center h-full w-full bg-gray-50 rounded-xl'
+                        className='flex items-center justify-center h-full w-full bg-gray-50 dark:bg-gray-800 rounded-xl'
                     >
-                        <p className='text-gray-800 text-sm'>Dígite los valores de las variables para calcular el período</p>
+                        <p className='text-gray-800 dark:text-gray-200 text-sm text-center'>Introduzca los valores de las variables para obtener el cálculo del período.</p>
                     </div>)}
                     {resultadoPeriodo && (
                         <div className="opacity-0 animate-fadeIn">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Modal from '../../../../shared/components/Modal'
 import "react-tooltip/dist/react-tooltip.css";
-import { crearRegistro } from '../../services/registrosServices'
+import { editarRegistro } from '../../services/registrosServices'
 import { toast } from 'sonner'
 import FormRegistro from './FormRegistro'
 
@@ -22,9 +22,14 @@ const ModalEditarRegistro = (props) => {
         setMessageError(false);
         setLoading(true);
         try {
-            const result = await crearRegistro(data)
-            const { data: resultData } = result 
-            setRegistros(prevGrupos => [resultData, ...prevGrupos]);
+            const result = await editarRegistro(data, registroSeleccionado?.id);
+            const { data: resultData } = result; 
+            setRegistros(prevRegistros =>
+                prevRegistros.map(item =>
+                    item.id === resultData.id ? resultData : item
+                )
+            );
+
             cerrarModal();
             setValue("fechaLibre", "");
             setValue("mes", "");
@@ -33,7 +38,7 @@ const ModalEditarRegistro = (props) => {
             setValue("trimestre", "");
             setCambiosVariables(0);
             setValorVariables([]);
-            toast.success(`El registro ha sido creado exitosamente.`);
+            toast.success(`El registro ha sido editado exitosamente.`);
             reset();
         } catch (error) {
             const responseData = error?.response?.data || error; 

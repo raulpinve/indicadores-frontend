@@ -5,6 +5,11 @@ export const crearRegistro = async (values) => {
     return response.data;
 }
 
+export const editarRegistro = async (data, registroId) => {
+    const response = await api.put(`/registros/${registroId}`, data);
+    return response.data;
+}
+
 export const obtenerRegistros = async (versionId) => {
     const response = await api.get(`/registros/${versionId}/todos`);
     return response.data;
