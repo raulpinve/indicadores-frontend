@@ -14,18 +14,24 @@ import TableTr from '../../shared/components/TableTr';
 import TableTh from '../../shared/components/TableTh';
 import TableTbody from '../../shared/components/TableTbody';
 import TableTd from '../../shared/components/TableTd';
-import SkeletonElement from '../../shared/components/SkeletonElement';
 import FormUploadFile from './components/FormUploadFile';
+import LoadingEvidencias from './components/LoadingEvidencias';
+import { useSelector } from 'react-redux';
+import { host } from '../../utils/config';
+import ModalAdvertencia from '../../shared/components/ModalAdvertencia';
 
 const EvidenciasPage = () => {
-    const {registroId} = useParams();
-    const [registro, setRegistro] = useState();
     const [versionIndicador, setVersionIndicador] = useState();
-    const [consulta, setConsulta] = useState("");
-    const debouncedConsulta = useDebounce(consulta, 500);
-    const [loading, setLoading] = useState(true);
-    const [pagina, setPagina] = useState(0);
+    const token = useSelector(state => state.auth.token);
     const [evidencias, setEvidencias] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [consulta, setConsulta] = useState("");
+    const [registro, setRegistro] = useState();
+    const [pagina, setPagina] = useState(0);
+    const {registroId} = useParams();
+    const [modalActivo, setModalActivo] = useState("");
+    const [messageErrorDownload, setMessageErrorDownload] = useState("");
+    const debouncedConsulta = useDebounce(consulta, 500);
 
     // Obtener información del registro
     useEffect(() => {
@@ -65,55 +71,86 @@ const EvidenciasPage = () => {
         };
     }, [registroId]);
 
+     const getFileExt = (filename) => {
+        return filename.split('.').pop().toLowerCase();
+    }
+
+    const getMimetype = (filename) => {
+        const ext = getFileExt(filename);
+      
+        // Excel
+        if (ext === "xls") {
+          return "application/vnd.ms-excel";
+        } else if (ext === "xlsx") {
+          return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        }
+        // Word
+        else if (ext === "doc") {
+          return "application/msword";
+        } else if (ext === "docx") {
+          return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        }
+        // Powerpoint
+        else if (ext === "ppt") {
+          return "application/vnd.ms-powerpoint";
+        } else if (ext === "pptx") {
+          return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        }
+        // PDF
+        else if (ext === "pdf") {
+          return "application/pdf";
+        }
+        // Imágenes
+        else if (ext === "png") {
+          return "image/png";
+        } else if (ext === "jpg" || ext === "jpeg") {
+          return "image/jpeg";
+        }
+        // Video
+        else if (ext === "mp4") {
+          return "video/mp4";
+        }
+        // Otros tipos de archivos (genérico)
+        else {
+          return "application/octet-stream"; // MIME type por defecto para archivos binarios
+        }
+    };
+
+    const handleDownload = async (evidencia) => {
+        try {
+            let headers = new Headers();
+            headers.append('Authorization', token);
+
+            const res = await fetch(`${host}/evidencias/${evidencia.id}/download`, {
+                method: 'GET',
+                headers: headers
+            });
+
+            if (!res.ok) {
+                const errorBody = await res.json();
+                setModalActivo("advertencia");
+                throw new Error(errorBody.message);
+            }
+
+            const blob = await res.blob();
+            const newBlob = new Blob([blob], { type: getMimetype(evidencia?.nombreGuardado) });
+
+            const data = window.URL.createObjectURL(newBlob);
+            const link = document.createElement('a');
+            link.href = data;
+            link.download = evidencia?.nombreOriginal || 'archivo'; // 👈 fuerza la descarga
+            link.click();
+
+            setTimeout(() => window.URL.revokeObjectURL(data), 100);
+        } catch (error) {
+            setModalActivo("advertencia");
+            setMessageErrorDownload(error?.message);
+        }
+    }
+
+
     return (<>
-        {loading && (<>
-            <div className='font-semibold text-2xl flex items-center gap-2 my-4'>
-                <SkeletonElement className="h-6 w-[200px]"/>
-            </div>
-            <Card>
-                <CardTitulo className={`flex items-center gap-2`}>
-                    Evidencias
-                    <SkeletonElement className="h-6 w-[120px]"/>
-                </CardTitulo>
-                <Table>
-                    <TableThead>
-                        <TableTr>
-                            <TableTh>Archivo</TableTh>
-                            <TableTh className='text-center'>Acciones</TableTh>
-                        </TableTr>
-                    </TableThead>
-                    <TableTbody>
-                        {[0,1,2,3,4,5,6].map(index => 
-                            <TableTr key={index}>
-                                <TableTd><SkeletonElement className="h-6 w-full" /></TableTd>
-                                <TableTd>
-                                    <div className="flex items-center justify-center gap-2">
-                                        <Button
-                                            colorButton={`secondary`}
-                                            title="Ver vista previa"
-                                        >
-                                            <LuEye />
-                                        </Button>
-                                        <Button
-                                            colorButton={`secondary`}
-                                            title="Descargar"
-                                        >
-                                            <LuDownload />
-                                        </Button>
-                                        <Button
-                                            colorButton={`danger`}
-                                            title="Eliminar"
-                                        >   
-                                            <LuTrash2 />
-                                        </Button>
-                                    </div>
-                                </TableTd>
-                            </TableTr>
-                        )}
-                    </TableTbody>
-                </Table>
-            </Card>
-        </>)}
+        {loading && (<LoadingEvidencias />)}
         {!loading && (<>
             <h1 className='font-semibold text-2xl flex items-center gap-2 my-4'>
                 {/* Nombre */}
@@ -159,35 +196,50 @@ const EvidenciasPage = () => {
                         </TableTr>
                     </TableThead>
                     <TableTbody>
-                        <TableTr>
-                            <TableTd>Nombre del archivo</TableTd>
-                            <TableTd>
-                                <div className="flex items-center justify-center gap-2">
-                                    <Button
-                                        colorButton={`secondary`}
-                                        title="Ver vista previa"
-                                    >
-                                        <LuEye />
-                                    </Button>
-                                    <Button
-                                        colorButton={`secondary`}
-                                        title="Descargar"
-                                    >
-                                        <LuDownload />
-                                    </Button>
-                                    <Button
-                                        colorButton={`danger`}
-                                        title="Eliminar"
-                                    >   
-                                        <LuTrash2 />
-                                    </Button>
-                                </div>
-                            </TableTd>
-                        </TableTr>
+                        {evidencias.map(evidencia => 
+                            <TableTr key={evidencia.id}>
+                                <TableTd>{evidencia.nombreOriginal}</TableTd>
+                                <TableTd>
+                                    <div className="flex items-center justify-center gap-2">
+                                       <a 
+                                            href={`/evidencias/${evidencia.id}/vista-previa`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                        >
+                                            <Button colorButton="secondary" title="Ver vista previa">
+                                                <LuEye />
+                                            </Button>
+                                        </a>
+                                        <Button
+                                            colorButton={`secondary`}
+                                            title="Descargar"
+                                            onClick={() => handleDownload(evidencia)}
+                                        >
+                                            <LuDownload />
+                                        </Button>
+                                        <Button
+                                            colorButton={`danger`}
+                                            title="Eliminar"
+                                        >   
+                                            <LuTrash2 />
+                                        </Button>
+                                    </div>
+                                </TableTd>
+                            </TableTr>
+                        )}
                     </TableTbody>
                 </Table>
             </Card>
         </>)}
+        {modalActivo === "advertencia" && (
+            <ModalAdvertencia 
+                cerrarModal = {() => {
+                    setModalActivo("");
+                }}
+                title={`Error`}
+                message= {messageErrorDownload}
+            />
+        )}
     </>);
 };
 

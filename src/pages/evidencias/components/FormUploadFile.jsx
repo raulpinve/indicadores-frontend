@@ -52,7 +52,6 @@ const FormUploadFile = (props) => {
                 response.data.data,  
                 ...prevEvidencia,
             ]);
-            console.log(response)
         } catch (err) {
 
             const { response } = err; 
