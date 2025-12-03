@@ -18,6 +18,7 @@ import CrearIndicadorPage from './pages/indicadores/crearIndicadorPage'
 import IndicadorPage from './pages/indicadores/IndicadorPage'
 import EditarIndicadorPage from './pages/indicadores/EditarIndicadorPage'
 import ActualizarIndicadorPage from './pages/indicadores/ActualizarIndicadorPage'
+import EvidenciasPage from './pages/evidencias/EvidenciasPage'
 
 function App() {
     const dispatch = useDispatch();
@@ -81,6 +82,7 @@ function App() {
           <Route path="/indicadores/:versionId" element={<IndicadorPage />} />
           <Route path="/indicadores/:versionId/editar" element={<EditarIndicadorPage />} />
           <Route path="/indicadores/:versionId/actualizar" element={<ActualizarIndicadorPage />} />
+          <Route path="/evidencias/:registroId" element={<EvidenciasPage />} />
           <Route path="/indicadores/crear" element={<CrearIndicadorPage />} />
           <Route path="/editar-perfil" element={<EditarPerfilPage />} />
           <Route path="/configuracion/empresas/:empresaId" element={<ConfiguracionEmpresaPage />} />

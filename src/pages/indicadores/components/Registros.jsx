@@ -14,12 +14,14 @@ import { obtenerRegistros } from '../services/registrosServices.js';
 import { etiquetasResultado, formatPeriodo, getResultadoColor } from '../utils/utils.js';
 import ModalEditarRegistro from './registro/ModalEditarRegistro.jsx';
 import ModalEliminarRegistro from './registro/ModalEliminarRegistro.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const Registros = (props) => {
     const {versionSeleccionada} = props;
     const [modalActivo, setModalActivo] = useState("");
     const [registros, setRegistros] = useState([]);
     const [registroSeleccionado, setRegistroSeleccionado] = useState();
+    const navigate = useNavigate();
 
     // Obtener los registros
     useEffect(() => {
@@ -72,7 +74,12 @@ const Registros = (props) => {
                             </TableTd>
                             <TableTd>
                                 <div className="flex justify-center">
-                                    <Button colorButton={`secondary`}>
+                                    <Button 
+                                        colorButton={`secondary`}
+                                        onClick={()=> {
+                                            navigate("/evidencias/" + registro?.id)
+                                        }}
+                                    >
                                         <LuFolder />
                                     </Button>
                                 </div>

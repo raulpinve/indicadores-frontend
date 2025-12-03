@@ -69,177 +69,175 @@ const IndicadoresPage = () => {
     }, [empresaId])
 
     return (
-        <div>
-            <Card>
-                <CardTitulo> Indicadores 
-                    <Button
-                        onClick={() => {
-                            navigate("/indicadores/crear")
-                        }}
-                        className="ml-2"
-                        colorButton="primary"
-                        textButton={`Crear`}
-                    />
-                </CardTitulo>
-                
-                {/* Filtros para buscar indicador */}
-                <div className="mt-3 flex items-center gap-2">
-                    <input
-                        type="text"
-                        className="input-form w-50"
-                        placeholder="Buscar..."
-                        onChange={(e) => setConsulta(e.target.value)}
-                    />
-                    <div className='relative'>
-                        <select 
-                            className="select-form w-50"
-                            onChange={(e) => setProcesoSeleccionado(e.target.value)}
-                        >
-                            <option value="">Seleccionar proceso...</option>
-                            {procesos.map(proceso => {
-                                return <option 
-                                    key={proceso.id}
-                                    value={proceso.id}
-                                >
-                                    {proceso.nombre}
-                                </option>
-                            })}
-                        </select>
-                        <LuChevronDown className="absolute top-[15px] right-3" />
-                    </div>
+        <Card>
+            <CardTitulo> Indicadores 
+                <Button
+                    onClick={() => {
+                        navigate("/indicadores/crear")
+                    }}
+                    className="ml-2"
+                    colorButton="primary"
+                    textButton={`Crear`}
+                />
+            </CardTitulo>
+            
+            {/* Filtros para buscar indicador */}
+            <div className="mt-3 flex items-center gap-2">
+                <input
+                    type="text"
+                    className="input-form w-50"
+                    placeholder="Buscar..."
+                    onChange={(e) => setConsulta(e.target.value)}
+                />
+                <div className='relative'>
+                    <select 
+                        className="select-form w-50"
+                        onChange={(e) => setProcesoSeleccionado(e.target.value)}
+                    >
+                        <option value="">Seleccionar proceso...</option>
+                        {procesos.map(proceso => {
+                            return <option 
+                                key={proceso.id}
+                                value={proceso.id}
+                            >
+                                {proceso.nombre}
+                            </option>
+                        })}
+                    </select>
+                    <LuChevronDown className="absolute top-[15px] right-3" />
                 </div>
+            </div>
 
-                <Table>
-                    <TableThead>
-                        <tr className="text-left">
-                            <TableTh>Nombre del indicador</TableTh>
-                            <TableTh className='text-center'>Version</TableTh>
-                            <TableTh className='text-center'>Estado actual</TableTh>
-                            <TableTh className='text-center'>VRUP</TableTh>
-                            <TableTh>Proceso</TableTh>
-                        </tr>
-                    </TableThead>
-                
-                    {/* Loading */}
-                    {loading && (
-                        <SkeletonTable rows={7} columns={5}/>
-                    )}
-                    <TableTbody>
-                        {/* Mostrar error */}
-                        {!loading && error && (
-                            <tr>
-                                <TableTd colSpan={5}>{error}</TableTd>
-                            </tr>
-                        )}
-                        {!loading && !error && indicadores.length === 0 && (
-                            <tr>
-                                <TableTd colSpan={5}>No hay indicadores por mostrar</TableTd>
-                            </tr>
-                        )}
-                        {!loading && !error && indicadores.length > 0 && (
-                            <>
-                               {indicadores.map(indicador => {
-                                    const valor = indicador?.ultimoResultado?.valor;
-                                    const estado = indicador?.ultimoResultado?.estadoResultado;
-                                    const vrupRaw = indicador?.ultimoResultado?.vrup;
-                                    const direccion = indicador?.ultimoResultado?.direccionMeta;
-
-                                    // Convertir VRUP a número
-                                    const vrup = vrupRaw !== null && vrupRaw !== undefined ? parseFloat(vrupRaw) : null;
-
-                                    // Determinar tendencia (según dirección de la meta)
-                                    let tendencia = null;
-                                    if (vrup !== null && !isNaN(vrup)) {
-                                        if (direccion === "asc") {
-                                            tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
-                                        } else if (direccion === "desc") {
-                                            tendencia = vrup > 0 ? "empeora" : vrup < 0 ? "mejora" : "sin cambio";
-                                        } else {
-                                            tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
-                                        }
-                                    }
-
-                                    // Color y símbolo según tendencia
-                                    let vrupColor = "text-gray-500";
-                                    let vrupIcon = "";
-
-                                    if (tendencia === "mejora") {
-                                        vrupColor = "text-green-600";
-                                        vrupIcon = "↑";
-                                    } else if (tendencia === "empeora") {
-                                        vrupColor = "text-red-600";
-                                        vrupIcon = "↓";
-                                    }
-
-                                    return (
-                                        <tr 
-                                            key={indicador.id} 
-                                            className="cursor-pointer text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                                            onClick={() => redireccionarVersionIndicador(indicador.id)}
-                                        >
-                                            {/* Nombre del indicador */}
-                                            <TableTd className="flex items-center gap-3">
-                                                <p>{indicador?.nombre}</p>
-                                            </TableTd>
-                                            <TableTd className="text-center">
-                                                <p>{indicador?.version}</p>
-                                            </TableTd>
-
-                                            {/* Último resultado y estado */}
-                                            <TableTd>
-                                                <div className='flex justify-center'>
-                                                    {valor && estado ? (
-                                                        <div className="flex items-center gap-2 font-semibold">
-                                                            <span>{valor}</span>
-                                                            {estado === "optimo" && (
-                                                                <div className="bg-green-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Óptimo</div>
-                                                            )}
-                                                            {estado === "critico" && (
-                                                                <div className="bg-red-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Crítico</div>
-                                                            )}
-                                                            {estado === "aceptable" && (
-                                                                <div className="bg-yellow-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Aceptable</div>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <p>—</p>
-                                                    )}
-                                                </div>
-                                            </TableTd>
-
-                                            {/* VRUP con flecha y color */}
-                                            <TableTd>
-                                                <div className="flex justify-center">
-                                                    {vrup !== null && !isNaN(vrup) ? (
-                                                        <p className={`flex items-center gap-1 font-semibold ${vrupColor}`}>
-                                                            {vrupIcon} {Math.abs(Math.round(vrup))} %
-                                                        </p>
-                                                    ) : (
-                                                        <p>—</p>
-                                                    )}
-                                                </div>
-                                            </TableTd>
-
-                                            {/* Nombre del proceso */}
-                                            <TableTd>
-                                                <p>{indicador?.procesoNombre}</p>
-                                            </TableTd>
-                                        </tr>
-                                    );
-                                })}
-                            </>
-                        )}
-                    </TableTbody>
-                </Table>
-                {!loading && (
-                    <Pagination
-                        paginaActual={paginaActual}
-                        totalPaginas={totalPaginas}
-                        onPageChange={setPaginaActual}
-                    />
+            <Table>
+                <TableThead>
+                    <tr className="text-left">
+                        <TableTh>Nombre del indicador</TableTh>
+                        <TableTh className='text-center'>Version</TableTh>
+                        <TableTh className='text-center'>Estado actual</TableTh>
+                        <TableTh className='text-center'>VRUP</TableTh>
+                        <TableTh>Proceso</TableTh>
+                    </tr>
+                </TableThead>
+            
+                {/* Loading */}
+                {loading && (
+                    <SkeletonTable rows={7} columns={5}/>
                 )}
-            </Card>
-        </div>
+                <TableTbody>
+                    {/* Mostrar error */}
+                    {!loading && error && (
+                        <tr>
+                            <TableTd colSpan={5}>{error}</TableTd>
+                        </tr>
+                    )}
+                    {!loading && !error && indicadores.length === 0 && (
+                        <tr>
+                            <TableTd colSpan={5}>No hay indicadores por mostrar</TableTd>
+                        </tr>
+                    )}
+                    {!loading && !error && indicadores.length > 0 && (
+                        <>
+                            {indicadores.map(indicador => {
+                                const valor = indicador?.ultimoResultado?.valor;
+                                const estado = indicador?.ultimoResultado?.estadoResultado;
+                                const vrupRaw = indicador?.ultimoResultado?.vrup;
+                                const direccion = indicador?.ultimoResultado?.direccionMeta;
+
+                                // Convertir VRUP a número
+                                const vrup = vrupRaw !== null && vrupRaw !== undefined ? parseFloat(vrupRaw) : null;
+
+                                // Determinar tendencia (según dirección de la meta)
+                                let tendencia = null;
+                                if (vrup !== null && !isNaN(vrup)) {
+                                    if (direccion === "asc") {
+                                        tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
+                                    } else if (direccion === "desc") {
+                                        tendencia = vrup > 0 ? "empeora" : vrup < 0 ? "mejora" : "sin cambio";
+                                    } else {
+                                        tendencia = vrup > 0 ? "mejora" : vrup < 0 ? "empeora" : "sin cambio";
+                                    }
+                                }
+
+                                // Color y símbolo según tendencia
+                                let vrupColor = "text-gray-500";
+                                let vrupIcon = "";
+
+                                if (tendencia === "mejora") {
+                                    vrupColor = "text-green-600";
+                                    vrupIcon = "↑";
+                                } else if (tendencia === "empeora") {
+                                    vrupColor = "text-red-600";
+                                    vrupIcon = "↓";
+                                }
+
+                                return (
+                                    <tr 
+                                        key={indicador.id} 
+                                        className="cursor-pointer text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                        onClick={() => redireccionarVersionIndicador(indicador.id)}
+                                    >
+                                        {/* Nombre del indicador */}
+                                        <TableTd className="flex items-center gap-3">
+                                            <p>{indicador?.nombre}</p>
+                                        </TableTd>
+                                        <TableTd className="text-center">
+                                            <p>{indicador?.version}</p>
+                                        </TableTd>
+
+                                        {/* Último resultado y estado */}
+                                        <TableTd>
+                                            <div className='flex justify-center'>
+                                                {valor && estado ? (
+                                                    <div className="flex items-center gap-2 font-semibold">
+                                                        <span>{valor}</span>
+                                                        {estado === "optimo" && (
+                                                            <div className="bg-green-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Óptimo</div>
+                                                        )}
+                                                        {estado === "critico" && (
+                                                            <div className="bg-red-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Crítico</div>
+                                                        )}
+                                                        {estado === "aceptable" && (
+                                                            <div className="bg-yellow-200 rounded-lg px-2 py-1 text-slate-800 text-xs">Aceptable</div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <p>—</p>
+                                                )}
+                                            </div>
+                                        </TableTd>
+
+                                        {/* VRUP con flecha y color */}
+                                        <TableTd>
+                                            <div className="flex justify-center">
+                                                {vrup !== null && !isNaN(vrup) ? (
+                                                    <p className={`flex items-center gap-1 font-semibold ${vrupColor}`}>
+                                                        {vrupIcon} {Math.abs(Math.round(vrup))} %
+                                                    </p>
+                                                ) : (
+                                                    <p>—</p>
+                                                )}
+                                            </div>
+                                        </TableTd>
+
+                                        {/* Nombre del proceso */}
+                                        <TableTd>
+                                            <p>{indicador?.procesoNombre}</p>
+                                        </TableTd>
+                                    </tr>
+                                );
+                            })}
+                        </>
+                    )}
+                </TableTbody>
+            </Table>
+            {!loading && (
+                <Pagination
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    onPageChange={setPaginaActual}
+                />
+            )}
+        </Card>
     );
 };
 
