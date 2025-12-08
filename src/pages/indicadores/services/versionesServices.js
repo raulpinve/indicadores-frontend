@@ -1,7 +1,9 @@
 import api from "../../../utils/servicesUtils";
 
-export const obtenerVersionesPorVersionId = async(versionId) => {
-    const response = await api.get(`/versiones/${versionId}/versiones`, versionId);
+export const obtenerVersionesPorVersionId = async(versionId, pagina) => {
+    const response = await api.get(`/versiones/${versionId}/versiones`, 
+        {params: { page: pagina}}
+    );
     return response.data;
 }
 

@@ -13,6 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { obtenerVersionesPorVersionId } from '../services/versionesServices';
 import SkeletonTable from '../../../shared/components/SkeletonTable';
 import ModalEditarNumeroVersion from './versiones/ModalEditarNumeroVersion';
+import Pagination from '../../../shared/components/Pagination';
 
 const ControlVersiones = (props) => {
     const [loading, setLoading] = useState();
@@ -21,13 +22,17 @@ const ControlVersiones = (props) => {
     const {versionId} = useParams();
     const [modalActivo, setModalActivo] = useState("");
     const [versionSeleccionada, setVersionSeleccionada] = useState();
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     // Obtener el listado de versiones
     useEffect(() => {
         const fetchData = async() => {
             setLoading(true);
             try {
-                const resultado = await obtenerVersionesPorVersionId(versionId);
+                const resultado = await obtenerVersionesPorVersionId(versionId,paginaActual);
+                setPaginaActual(resultado.paginacion.pagina);
+                setTotalPaginas(resultado.paginacion.totalPaginas);
                 setVersiones(resultado?.data);   
             } catch (error) {
                 console.error(error)
@@ -36,7 +41,7 @@ const ControlVersiones = (props) => {
             }
         }
         fetchData();
-    }, [])
+    }, [paginaActual])
 
     return (
         <Card>
@@ -108,6 +113,13 @@ const ControlVersiones = (props) => {
                     </TableTbody>
                 )}
             </Table>
+            {!loading && (
+                <Pagination 
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    onPageChange={setPaginaActual}
+                />
+            )}
             {modalActivo === "editar-version" && 
                 <ModalEditarNumeroVersion 
                     cerrarModal = {() => setModalActivo("")}
