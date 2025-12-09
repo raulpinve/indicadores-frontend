@@ -15,26 +15,38 @@ import { etiquetasResultado, formatPeriodo, getResultadoColor } from '../utils/u
 import ModalEditarRegistro from './registro/ModalEditarRegistro.jsx';
 import ModalEliminarRegistro from './registro/ModalEliminarRegistro.jsx';
 import { useNavigate } from 'react-router-dom';
+import { handleErrorsBasic } from '../../../utils/handleErrors.js';
+import Pagination from '../../../shared/components/Pagination.jsx';
+import SkeletonElement from '../../../shared/components/SkeletonElement.jsx';
 
 const Registros = (props) => {
     const {versionSeleccionada} = props;
     const [modalActivo, setModalActivo] = useState("");
     const [registros, setRegistros] = useState([]);
     const [registroSeleccionado, setRegistroSeleccionado] = useState();
+    const [messageError, setMessageError] = useState(null);
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const [loading, setLoading] = useState();
     const navigate = useNavigate();
 
     // Obtener los registros
     useEffect(() => {
         const fetchRegistros = async () => {
+            setLoading(true);
             try {
-                const resultado = await obtenerRegistros(versionSeleccionada?.id);
+                const resultado = await obtenerRegistros(versionSeleccionada?.id, "", paginaActual);
+                setPaginaActual(resultado.paginacion.pagina);
+                setTotalPaginas(resultado.paginacion.totalPaginas);
                 setRegistros(resultado.data);
             } catch (error) {
-                console.error(error)
+                handleErrorsBasic(error, setMessageError)
+            } finally{
+                setLoading(false);
             }
         }
         fetchRegistros();
-    }, [])
+    }, [paginaActual])
 
     return (<>
         <Card>
@@ -61,6 +73,26 @@ const Registros = (props) => {
                     </TableTr>
                 </TableThead>
                 <TableTbody>
+                    {!loading && registros.length === 0 && messageError && (
+                        <TableTr><TableTd colSpan={`5`}>{messageError}</TableTd></TableTr>
+                    )}
+                    {loading && registros.length === 0 && !messageError && 
+                        [0,1,2,3,4,5,6,7,8,9].map(element => 
+                        <TableTr key={element}>
+                            <TableTd><SkeletonElement 
+                            
+                            className="h-6" /></TableTd>
+                            <TableTd><SkeletonElement className="h-6" /></TableTd>
+                            <TableTd><SkeletonElement className="h-6" /> </TableTd>
+                            <TableTd><SkeletonElement className="h-6" /></TableTd>
+                            <TableTd>
+                                <div className="flex justify-center gap-1">
+                                    <SkeletonElement className="h-6 w-full" />
+                                    <SkeletonElement className="h-6 w-full" />
+                                </div>
+                            </TableTd>
+                        </TableTr>
+                    )}
                     {registros.map(registro => 
                         <TableTr key={registro.id}>
                             <TableTd>{formatPeriodo(registro)}</TableTd>
@@ -113,7 +145,15 @@ const Registros = (props) => {
                     )}
                 </TableTbody>
             </Table>
+            {!loading && (
+                <Pagination 
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    onPageChange={setPaginaActual}
+                />
+            )}
         </Card>
+
         {modalActivo === "crear" && (
             <ModalCrearRegistro 
                 cerrarModal = {()=> setModalActivo("")}

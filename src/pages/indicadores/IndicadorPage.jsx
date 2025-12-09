@@ -87,7 +87,7 @@ const IndicadorPage = () => {
             </h1>
 
             {/* Gráfica y registros */}
-            <div className="grid gap-4 hidden">
+            <div className="grid gap-4">
                 <Grafica />
                 <Registros versionSeleccionada={versionSeleccionada} />
             </div>

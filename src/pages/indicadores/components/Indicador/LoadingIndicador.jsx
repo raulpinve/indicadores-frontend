@@ -111,17 +111,15 @@ const LoadingIndicador = () => {
                     <Table className='table-fixed'>
                         <TableThead>
                             <TableTr>
-                                <TableTh>Períodos</TableTh>
-                                <TableTh className='text-center'>Resultado</TableTh>
-                                <TableTh className='text-center'>Evidencias</TableTh>
-                                <TableTh className='text-center'>Análisis</TableTh>
+                                <TableTh>Versión</TableTh>
+                                <TableTh className='text-center'>Estado</TableTh>
+                                <TableTh className='text-center'>Descripción</TableTh>
                                 <TableTh className='text-center'>Acciones</TableTh>
                             </TableTr>
                         </TableThead>
                         <TableTbody>
                             {[0,1,2,3,4,5,6,7,8,9].map(element => 
                                 <TableTr key={element}>
-                                    <TableTd><SkeletonElement className="h-6" /></TableTd>
                                     <TableTd><SkeletonElement className="h-6" /></TableTd>
                                     <TableTd><SkeletonElement className="h-6" /> </TableTd>
                                     <TableTd><SkeletonElement className="h-6" /></TableTd>

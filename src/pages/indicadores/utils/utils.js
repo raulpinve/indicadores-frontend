@@ -23,7 +23,7 @@ export const calcularResultadoPeriodo = async (meta = {}, resultado) => {
     });
 
     if (tipoMeta === "absoluta") {
-        return resultado > valorMeta
+        return resultado >= valorMeta
         ? getResponse("optimo")
         : getResponse("critico");
     }
@@ -31,12 +31,12 @@ export const calcularResultadoPeriodo = async (meta = {}, resultado) => {
     const isAsc = direccion === "asc";
 
     if (isAsc) {
-        if (resultado > optimo) return getResponse("optimo");
-        if (resultado > aceptable) return getResponse("aceptable");
+        if (resultado >= optimo) return getResponse("optimo");
+        if (resultado >= aceptable) return getResponse("aceptable");
         return getResponse("critico");
     } else {
-        if (resultado < optimo) return getResponse("optimo");
-        if (resultado < aceptable) return getResponse("aceptable");
+        if (resultado <= optimo) return getResponse("optimo");
+        if (resultado <= aceptable) return getResponse("aceptable");
         return getResponse("critico");
     }
 };

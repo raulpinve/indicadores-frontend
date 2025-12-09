@@ -15,8 +15,10 @@ export const editarRegistro = async (data, registroId) => {
     return response.data;
 }
 
-export const obtenerRegistros = async (versionId) => {
-    const response = await api.get(`/registros/${versionId}/todos`);
+export const obtenerRegistros = async (versionId, consulta, pagina) => {
+    const response = await api.get(`/registros/${versionId}/todos`, {
+        params: { page: pagina, consulta }, 
+    });
     return response.data;
 }
 
