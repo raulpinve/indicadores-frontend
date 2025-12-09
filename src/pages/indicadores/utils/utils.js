@@ -96,3 +96,35 @@ export const etiquetasResultado = {
     aceptable: "Aceptable",
     critico: "Crítico"
 };
+
+export const reservedWordsMathLive = [
+    // funciones
+    "sin","cos","tan","cot","sec","csc",
+    "asin","acos","atan","acot","asec","acsc",
+    "sinh","cosh","tanh","coth",
+    "asinh","acosh","atanh",
+    "log","ln","exp","sqrt","abs",
+    "max","min","sup","inf",
+
+    // constantes
+    "pi","e","infinity","nan",
+
+    // operadores
+    "frac","over","sum","prod","int","lim","mod",
+    "left","right","big","bigg","cdot","times","div","pm","mp",
+    "leq","geq","neq","approx",
+
+    // entornos
+    "begin","end","matrix","pmatrix","bmatrix","vmatrix","vvmatrix",
+
+    // símbolos griegos
+    "alpha","beta","gamma","delta","epsilon","zeta","eta","theta","vartheta",
+    "iota","kappa","lambda","mu","nu","xi","omicron","rho","sigma",
+    "tau","upsilon","phi","chi","psi","omega",
+
+    // especiales MathLive
+    "imaginaryi","imaginaryj",
+
+    // variables sensibles
+    "x","y","z","i","j","k","t"
+];
