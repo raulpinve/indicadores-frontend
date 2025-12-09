@@ -21,11 +21,17 @@ const VerEscalas = (props) => {
                 {versionSeleccionada?.metas[0]?.tipoMeta === "absoluta" && (<>
                     <TableTr>
                         <TableTd className='text-xs text-center'>Óptimo</TableTd>
-                        <TableTd className='text-xs text-center'>{versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "<" }  {versionSeleccionada?.metas[0]?.valorMeta}</TableTd>
+                        <TableTd className='text-xs text-center'>
+                            {versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "<" } {versionSeleccionada?.metas[0]?.valorMeta} 
+                            {versionSeleccionada?.unidadMedida === "porcentaje"? "%": ""}
+                        </TableTd>
                     </TableTr>
                     <TableTr>
                         <TableTd className='text-xs text-center'>Crítico</TableTd>
-                        <TableTd className='text-xs text-center'>{versionSeleccionada?.metas[0]?.direccion === "asc" ? "<": ">" }  {versionSeleccionada?.metas[0]?.valorMeta}</TableTd>
+                        <TableTd className='text-xs text-center'>
+                            {versionSeleccionada?.metas[0]?.direccion === "asc" ? "<": ">" } {versionSeleccionada?.metas[0]?.valorMeta} 
+                            {versionSeleccionada?.unidadMedida === "porcentaje"? "%": ""}
+                        </TableTd>
                     </TableTr>
                 </>)}
 
@@ -33,15 +39,24 @@ const VerEscalas = (props) => {
                 {versionSeleccionada?.metas[0]?.tipoMeta === "escala"  && (<>
                     <TableTr>
                         <TableTd className='text-xs text-center'>Óptimo</TableTd>
-                        <TableTd className='text-xs text-center'>{versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "≤" }  {versionSeleccionada?.metas[0]?.optimo}</TableTd>
+                        <TableTd className='text-xs text-center'>
+                            {versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "≤" } {versionSeleccionada?.metas[0]?.optimo} 
+                            {versionSeleccionada?.unidadMedida === "porcentaje"? "%": ""}
+                        </TableTd>
                     </TableTr>
                     <TableTr>
                         <TableTd className='text-xs text-center'>Aceptable</TableTd>
-                        <TableTd className='text-xs text-center'>{versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "≤" }  {versionSeleccionada?.metas[0]?.aceptable}</TableTd>
+                        <TableTd className='text-xs text-center'>
+                            {versionSeleccionada?.metas[0]?.direccion === "asc" ? "≥": "≤" } {versionSeleccionada?.metas[0]?.aceptable} 
+                            {versionSeleccionada?.unidadMedida === "porcentaje"? "%": ""}
+                        </TableTd>
                     </TableTr>
                     <TableTr>
                         <TableTd className='text-xs text-center'>Crítico</TableTd>
-                        <TableTd className='text-xs text-center'>{versionSeleccionada?.metas[0]?.direccion === "asc" ? "<": ">" }  {versionSeleccionada?.metas[0]?.aceptable}</TableTd>
+                        <TableTd className='text-xs text-center'>
+                            {versionSeleccionada?.metas[0]?.direccion === "asc" ? "<": ">" } {versionSeleccionada?.metas[0]?.aceptable} 
+                            {versionSeleccionada?.unidadMedida === "porcentaje"? "%": ""}
+                        </TableTd>
                     </TableTr>
                 </>)}
             </TableTbody>

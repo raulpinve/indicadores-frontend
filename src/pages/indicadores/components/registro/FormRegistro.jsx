@@ -368,7 +368,7 @@ const FormRegistro = (props) => {
                                 <TableTbody>
                                     <TableTr>
                                         <TableTd className='w-1/2 text-left'>Valor</TableTd>
-                                        <TableTd className='w-1/2'>{resultadoPeriodo?.resultado}</TableTd>
+                                        <TableTd className='w-1/2'>{resultadoPeriodo?.resultado} {versionSeleccionada?.unidadMedida === "porcentaje" ? "%": ""} </TableTd>
                                     </TableTr>
                                     <TableTr>
                                         <TableTd className='text-left'>Resultado</TableTd>

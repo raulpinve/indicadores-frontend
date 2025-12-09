@@ -74,19 +74,23 @@ const ModalAgregarVariable = (props) => {
                 {/* Descripción */}
                 <div>
                     <label className='label-form'>Descripción<span className='input-required'>*</span></label>
-                    <textarea 
-                        className={`input-form resize-none h-[100px] ${errors.descripcion && errors.descripcion.message ? 'input-form-error' : ''} `}
+                    <textarea
+                        className={`input-form resize-none h-[100px] ${errors.descripcion ? 'input-form-error' : ''}`}
                         {...register("descripcion", {
-                            minLength: {
-                                value: 1, 
-                                message:"Debe tener al menos un caracter"
-                            }, 
+                            required: "La descripción es obligatoria",
+                            validate: value =>
+                                value.trim().length > 0 || "Debe agregar una descripción",
+                                minLength: {
+                                value: 1,
+                                message: "Debe tener al menos un caracter"
+                            },
                             maxLength: {
                                 value: 200,
-                                message: "No puede tener más de 20 caracteres"
+                                message: "No puede tener más de 200 caracteres"
                             }
                         })}
-                    ></textarea>
+                    />
+                    {errors.descripcion && <p className="text-red-600 text-sm">{errors.descripcion.message}</p>}
                 </div>
 
                 {/* Mensaje de error */}

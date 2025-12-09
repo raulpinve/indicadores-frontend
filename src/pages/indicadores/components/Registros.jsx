@@ -79,9 +79,7 @@ const Registros = (props) => {
                     {loading && registros.length === 0 && !messageError && 
                         [0,1,2,3,4,5,6,7,8,9].map(element => 
                         <TableTr key={element}>
-                            <TableTd><SkeletonElement 
-                            
-                            className="h-6" /></TableTd>
+                            <TableTd><SkeletonElement className="h-6"/></TableTd>
                             <TableTd><SkeletonElement className="h-6" /></TableTd>
                             <TableTd><SkeletonElement className="h-6" /> </TableTd>
                             <TableTd><SkeletonElement className="h-6" /></TableTd>
@@ -98,7 +96,7 @@ const Registros = (props) => {
                             <TableTd>{formatPeriodo(registro)}</TableTd>
                             <TableTd>
                                 <div className="flex justify-center gap-2 items-center">
-                                    <span className='font-semibold'>{registro.resultado}</span>
+                                    <span className='font-semibold'>{registro.resultado}{versionSeleccionada?.unidadMedida === "porcentaje" ? "%": ""}</span>
                                     <div className={`${getResultadoColor(registro.estadoResultado)} dark:text-white py-1.5 px-2 text-xs rounded-md font-semibold`}>
                                         {etiquetasResultado[registro.estadoResultado]}
                                     </div>
