@@ -21,6 +21,8 @@ import { host } from '../../utils/config';
 import ModalAdvertencia from '../../shared/components/ModalAdvertencia';
 import ModalEliminarEvidencia from './components/ModalEliminarEvidencia';
 import Pagination from '../../shared/components/Pagination';
+import { handleErrors, handleErrorsBasic } from '../../utils/handleErrors';
+import SkeletonTable from '../../shared/components/SkeletonTable';
 
 const EvidenciasPage = () => {
     const [versionIndicador, setVersionIndicador] = useState();
@@ -33,6 +35,7 @@ const EvidenciasPage = () => {
     const [modalActivo, setModalActivo] = useState("");
     const [messageErrorDownload, setMessageErrorDownload] = useState("");
     const [evidenciaSeleccionada, setEvidenciaSeleccionada] = useState();
+    const [messageError, setMessageError] = useState();
     const debouncedConsulta = useDebounce(consulta, 500);
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
@@ -58,6 +61,7 @@ const EvidenciasPage = () => {
                 setEvidencias(resultadoEvidencias?.data);
 
             } catch (error) {
+                handleErrorsBasic(error, setMessageError);
                 console.error(error);
             } finally {
                 if (isActive) {
@@ -198,42 +202,52 @@ const EvidenciasPage = () => {
                             <TableTh className='text-center'>Acciones</TableTh>
                         </TableTr>
                     </TableThead>
+                    {loading && evidencias.length === 0 && !messageError && (
+                        <SkeletonTable columns={2} rows={7}/>
+                    )}
                     <TableTbody>
-                        {evidencias.map(evidencia => 
-                            <TableTr key={evidencia.id}>
-                                <TableTd>{evidencia.nombreOriginal}</TableTd>
-                                <TableTd>
-                                    <div className="flex items-center justify-center gap-2">
-                                       <a 
-                                            href={`/evidencias/${evidencia.id}/vista-previa`} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Button colorButton="secondary" title="Ver vista previa">
-                                                <LuEye />
-                                            </Button>
-                                        </a>
-                                        <Button
-                                            colorButton={`secondary`}
-                                            title="Descargar"
-                                            onClick={() => handleDownload(evidencia)}
-                                        >
-                                            <LuDownload />
-                                        </Button>
-                                        <Button
-                                            colorButton={`danger`}
-                                            title="Eliminar"
-                                            onClick={() =>{
-                                                setModalActivo("eliminar-evidencia");
-                                                setEvidenciaSeleccionada(evidencia)
-                                            }}
-                                        >   
-                                            <LuTrash2 />
-                                        </Button>
-                                    </div>
-                                </TableTd>
+                        {!loading && !messageError && evidencias.length === 0 && (
+                            <TableTr>
+                                <TableTd colSpan={2}>No hay evidencias registradas</TableTd>
                             </TableTr>
                         )}
+                        {!loading && !messageError && evidencias.length > 0 && (<>
+                            {evidencias.map(evidencia => 
+                                <TableTr key={evidencia.id}>
+                                    <TableTd>{evidencia.nombreOriginal}</TableTd>
+                                    <TableTd>
+                                        <div className="flex items-center justify-center gap-2">
+                                        <a 
+                                                href={`/evidencias/${evidencia.id}/vista-previa`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                            >
+                                                <Button colorButton="secondary" title="Ver vista previa">
+                                                    <LuEye />
+                                                </Button>
+                                            </a>
+                                            <Button
+                                                colorButton={`secondary`}
+                                                title="Descargar"
+                                                onClick={() => handleDownload(evidencia)}
+                                            >
+                                                <LuDownload />
+                                            </Button>
+                                            <Button
+                                                colorButton={`danger`}
+                                                title="Eliminar"
+                                                onClick={() =>{
+                                                    setModalActivo("eliminar-evidencia");
+                                                    setEvidenciaSeleccionada(evidencia)
+                                                }}
+                                            >   
+                                                <LuTrash2 />
+                                            </Button>
+                                        </div>
+                                    </TableTd>
+                                </TableTr>
+                            )}
+                        </>)}
                     </TableTbody>
                 </Table>
                 {!loading && (
