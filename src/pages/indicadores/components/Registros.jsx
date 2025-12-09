@@ -117,7 +117,10 @@ const Registros = (props) => {
                                 </div>
                             </TableTd>
                             <TableTd >
-                                <p>{registro.analisis}</p>
+                                {registro.analisis !== "" ? 
+                                    <p>{registro.analisis}</p>
+                                    : <p className='text-center'>---</p>
+                                }
                             </TableTd>
                             <TableTd>
                                 <div className="flex justify-center gap-1">

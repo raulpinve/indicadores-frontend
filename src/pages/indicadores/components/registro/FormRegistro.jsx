@@ -16,7 +16,7 @@ import TableTh from '../../../../shared/components/TableTh';
 
 const FormRegistro = (props) => {
     const {versionSeleccionada, onSubmitFormulario, cerrarModal, messageError, loading, registroSeleccionado} = props;
-    const {register, handleSubmit, setError, formState: { errors }, setValue, reset} = useForm({ mode: "onChange"})
+    const {register, handleSubmit, setError, formState: { errors }, setValue, reset, clearErrors} = useForm({ mode: "onChange"})
     const [cambiosVariables, setCambiosVariables] = useState(0);
     const [valorVariables, setValorVariables] = useState([]);
     const [resultadoPeriodo, setResultadoPeriodo] = useState(); 
@@ -337,14 +337,12 @@ const FormRegistro = (props) => {
 
                         {/* Análisis */}
                         <div className='mt-2'>
-                            <label className="label-form" htmlFor='analisis'>
-                                Análisis<span className="text-red-600">*</span>
-                            </label>
+                            <label className="label-form" htmlFor='analisis'>Análisis</label>
                             <textarea 
-                                className='input-form h-20 resize-none' 
+                                className={`${errors.analisis && errors.analisis.message ? 'input-form-error' : ''} input-form h-32`}
                                 {...register("analisis", { 
-                                    required: true,
-
+                                    minLength: { value: 10, message: "Debe tener al menos 10 caracteres" },
+                                    maxLength: { value: 500, message: "No puede superar los 500 caracteres" }
                                 })}
                             ></textarea>
                             {errors.analisis && errors.analisis.message && (<p className="input-message-error">{errors.analisis.message}</p>)} 
@@ -355,7 +353,7 @@ const FormRegistro = (props) => {
                 
                     </div>
                     {!resultadoPeriodo && (<div 
-                        className='flex items-center justify-center h-full w-full bg-gray-50 dark:bg-gray-800 rounded-xl'
+                        className='flex items-center justify-center h-full w-full bg-gray-50 dark:bg-gray-800 rounded-xl p-8'
                     >
                         <p className='text-gray-800 dark:text-gray-200 text-sm text-center'>Introduzca los valores de las variables para obtener el cálculo del período.</p>
                     </div>)}

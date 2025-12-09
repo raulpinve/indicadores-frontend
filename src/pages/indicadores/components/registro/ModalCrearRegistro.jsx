@@ -41,8 +41,8 @@ const ModalCrearRegistro = (props) => {
 
             if (responseData?.statusCode === 400 && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
                 fieldErrors.forEach(({ field, message }) => {
-                    if(field === "resultado" || field === "estadoResultado"){
-                        setMessageError("Debe agregar toda la información de las variables");
+                    if(field === "resultado" || field === "estadoResultado" || field === "periodo"){
+                        setMessageError(message);
                     }else{
                         setError(field, { type: "server", message });
                     }
